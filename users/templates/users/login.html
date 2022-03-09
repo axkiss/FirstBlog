@@ -1,0 +1,89 @@
+{% extends 'blog_app/base.html' %}
+
+{% block title %}Log In - FIRSTBLOG{% endblock %}
+
+{% block content %}
+    <!--Full news block-->
+    <div class="col-xxl-5 col-xl-6 col-lg-7 col-md-9 mb-5">
+
+        <!--News body-->
+        <div class="news-body fs-5 px-5">
+            <h1 class="mb-4 text-center"><b>Log In</b></h1>
+            <!--Text of news-->
+            <div class="news-text mb-3">
+                {% if form.errors %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger text-center small" role="alert">
+                                {{ error|escape }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <div class="alert alert-warning text-center small" role="alert">
+                            {{ error|escape }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <form action="{% url 'users:login' %}" method="post">
+                    {% csrf_token %}
+                    <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">
+              <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" width="20" height="20"><title/><g id="about">
+                  <path
+                          d="M16,16A7,7,0,1,0,9,9,7,7,0,0,0,16,16ZM16,4a5,5,0,1,1-5,5A5,5,0,0,1,16,4Z"
+                          fill="ghostwhite"/><path
+                      d="M17,18H15A11,11,0,0,0,4,29a1,1,0,0,0,1,1H27a1,1,0,0,0,1-1A11,11,0,0,0,17,18ZM6.06,28A9,9,0,0,1,15,20h2a9,9,0,0,1,8.94,8Z"
+                      fill="ghostwhite"/></g></svg>
+            </span>
+                        {{ form.username }}
+                    </div>
+                    <div class="input-group mb-1">
+            <span class="input-group-text" id="basic-addon2">
+              <svg fill="white" height="20" viewBox="12 12 40 40" width="20" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                          d="M25.5 21.5C25.5 17.9101 28.4101 15 32 15C35.5899 15 38.5 17.9101 38.5 21.5V26H41.5V21.5C41.5 16.2533 37.2467 12 32 12C26.7533 12 22.5 16.2533 22.5 21.5V26H25.5V21.5Z"
+                          fill="ghostwhite"/><path
+                      d="M35 37.5C35 38.6104 34.3967 39.5799 33.5 40.0987V42.5C33.5 43.3284 32.8284 44 32 44C31.1716 44 30.5 43.3284 30.5 42.5V40.0987C29.6033 39.5799 29 38.6104 29 37.5C29 35.8431 30.3431 34.5 32 34.5C33.6569 34.5 35 35.8431 35 37.5Z"
+                      fill="ghostwhite"/><path clip-rule="evenodd"
+                                               d="M18 27.5C16.8954 27.5 16 28.3954 16 29.5V35.5C16 44.3366 23.1634 51.5 32 51.5C40.8366 51.5 48 44.3366 48 35.5V29.5C48 28.3954 47.1046 27.5 46 27.5H18ZM19 30.5V35.5C19 42.6797 24.8203 48.5 32 48.5C39.1797 48.5 45 42.6797 45 35.5V30.5H19Z"
+                                               fill="ghostwhite" fill-rule="evenodd"/></svg></span>
+                        {{ form.password }}
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox"
+                                   value="" id="RememberFlexCheck">
+                            <label class="form-check-label" for="RememberFlexCheck">
+                                Remember me
+                            </label>
+                        </div>
+                        <a href="#">Forgot?</a>
+                    </div>
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-block btn-outline-primary w-100 mb-3">
+                            Log In
+                        </button>
+
+                        <div class="text-center mb-3  border-bottom border-secondary"></div>
+                        <button class="btn btn-block btn-outline-primary btn-google w-100 mb-2" type="submit">Sign in
+                            with
+                            google
+                        </button>
+                        <button class="btn btn-block btn-outline-primary btn-facebook w-100 mb-2" type="submit">Sign in
+                            with
+                            facebook
+                        </button>
+                    </div>
+                    <div class=" d-flex justify-content-center">
+                        Don't have an account?&nbsp;<a href=""> Sign Up</a>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+
+    </div>
+
+{% endblock %}

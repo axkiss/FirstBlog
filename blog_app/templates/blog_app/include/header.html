@@ -1,0 +1,53 @@
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark  border-bottom border-secondary">
+
+    <div class="container">
+
+        <a class="navbar-brand fs-4 text-light" href="{% url 'index' %}"><B>FIRST<span
+                class="brand-color">BLOG</span></B></a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
+                aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="base-link" href="#">TEG1</a>
+                </li>
+                <li class="nav-item">
+                    <a class="base-link" href="#">TEG2</a>
+                </li>
+                <li class="nav-item">
+                    <a class="base-link" href="#">TEG3</a>
+                </li>
+                <li class="nav-item">
+                    <a class="base-link" href="#">ПОИСК</a>
+                </li>
+                <li class="nav-item">
+                    <a class="base-link" href="{% url 'about' %}">О БЛОГЕ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="base-link" href="{% url 'index' %}admin/">admin</a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                {% if not user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="base-link" href="{% url 'users:login' %}">Log in</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="">
+                            <button type="button" class="btn btn-outline-primary">Sign up
+                            </button>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="base-link" href="{% url 'users:logout' %}">Log out</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

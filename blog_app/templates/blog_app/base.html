@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>{% block title %}{% endblock %}</title>
+  {% load static %}
+  <script src="{% static 'blog_app/lib/js/jquery-3.6.0.slim.min.js' %}" defer></script>
+  <script src="{% static 'blog_app/lib/js/popper.min.js' %}" async></script>
+  <link rel="stylesheet" href="{% static 'blog_app/lib/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'blog_app/css/main.css' %}">
+  <script src="{% static 'blog_app/lib/js/bootstrap.min.js' %}" defer></script>
+  <script src="{% static 'blog_app/js/btntop.js' %}" defer></script>
+  <script src="{% static 'blog_app/js/validation.js' %}" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha384-GNFwBvfVxBkLMJpYMOABq3c+d3KnQxudP/mGPkzpZSTYykLBNsZEnG2D9G/X/+7D" crossorigin="anonymous" async></script>
+</head>
+<body class="bg-dark text-light">
+<!--Header (Navigation)-->
+<header>
+{% include './include/header.html' %}
+</header>
+<main>
+
+{% block last-post %}{% endblock %}
+
+  <section class="content">
+    <div class="container">
+      <div class="row justify-content-md-center">
+
+        {% block content %}{% endblock %}
+        {% block sidebar %}{% endblock %}
+
+      </div>
+
+    </div>
+  </section>
+
+</main>
+{% include './include/footer.html' %}
+</body>
+</html>
