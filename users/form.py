@@ -1,5 +1,64 @@
-from django.contrib.auth.forms import AuthenticationForm, UsernameField
+from django.contrib.auth import get_user_model, password_validation
+from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm
 from django import forms
+from django.utils.translation import gettext, gettext_lazy as _
+
+User = get_user_model()
+
+
+class MyUserCreationForm(UserCreationForm):
+    first_name = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'autofocus': True,
+            'class': "form-control",
+            'placeholder': "Ivan",
+        })
+    )
+    last_name = forms.CharField(
+        max_length=150,
+        widget=forms.TextInput(attrs={
+            'class': "form-control",
+            'placeholder': "Ivanov",
+        })
+    )
+    username = UsernameField(
+        widget=forms.TextInput(attrs={
+            'class': "form-control",
+            'placeholder': "ivan1996",
+        }))
+    email = forms.EmailField(
+        label=_("Email"),
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'autocomplete': 'email',
+            'class': "form-control",
+            'placeholder': "ivan1996@email.com",
+        })
+    )
+    password1 = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        min_length=8,
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password',
+            'class': "form-control",
+        }),
+        help_text=password_validation.password_validators_help_text_html(),
+    )
+    password2 = forms.CharField(
+        label=_("Password confirmation"),
+        strip=False,
+        min_length=8,
+        widget=forms.PasswordInput(attrs={
+            'autocomplete': 'new-password',
+            'class': "form-control"}),
+        help_text=_("Enter the same password as before, for verification."),
+    )
+
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ("first_name", "last_name", "username", "email")
 
 
 class MyAuthenticationForm(AuthenticationForm):
