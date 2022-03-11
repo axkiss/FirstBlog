@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model, password_validation
-from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm, PasswordResetForm
 from django import forms
 from django.utils.translation import gettext, gettext_lazy as _
 
@@ -75,5 +75,17 @@ class MyAuthenticationForm(AuthenticationForm):
             'autocomplete': 'current-password',
             'class': "form-control",
             'placeholder': "Your password",
+        })
+    )
+
+
+class MyPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        label=_("Email"),
+        max_length=254,
+        widget=forms.EmailInput(attrs={
+            'autofocus': True,
+            'autocomplete': 'email',
+            'class': "form-control"
         })
     )
