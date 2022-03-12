@@ -2,7 +2,6 @@ from django.urls import path, include
 from . import views
 from django.contrib.auth.views import LogoutView
 
-
 app_name = 'users'
 
 urlpatterns = [
@@ -11,5 +10,6 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     path('password_reset/', views.MyPasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', views.MyPasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', views.MyPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', views.MyPasswordResetCompleteView.as_view(), name='password_reset_complete')
 ]
-
