@@ -4,7 +4,7 @@ from django.contrib.auth.views import LoginView, PasswordResetView, PasswordRese
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
-from .form import MyAuthenticationForm, MyUserCreationForm, MyPasswordResetForm, MySetPasswordForm
+from .forms import MyAuthenticationForm, MyUserCreationForm, MyPasswordResetForm, MySetPasswordForm
 
 
 class RegisterView(View):
