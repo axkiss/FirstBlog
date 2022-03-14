@@ -26,28 +26,44 @@
                 <li class="nav-item">
                     <a class="base-link" href="{% url 'about' %}">О БЛОГЕ</a>
                 </li>
-                <li class="nav-item">
-                    <a class="base-link" href="{% url 'index' %}admin/">admin</a>
-                </li>
+
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav">
                 {% if not user.is_authenticated %}
                     <li class="nav-item">
                         <a class="base-link" href="{% url 'users:login' %}">Log in</a>
                     </li>
                     <li class="nav-item">
                         <a href="">
-                            <a class="base-link" href="{% url 'users:register' %}"><button type="button" class="btn btn-outline-primary">Register
-                            </button></a>
+                            <a class="base-link" href="{% url 'users:register' %}">
+                                <button type="button" class="btn btn-outline-primary">Register
+                                </button>
+                            </a>
                         </a>
                     </li>
                 {% endif %}
                 {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        {{ user.get_username }}
-                    </li>
-                    <li class="nav-item">
-                        <a class="base-link" href="{% url 'users:logout' %}">Log out</a>
+                    <li class="nav-item dropdown">
+                        <a class="base-link dropdown-toggle " href="#" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ user.get_username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><span class="dropdown-header fw-bold">Hi, {{ user.get_short_name }}!</span></li>
+                            {% if user.get_is_staff %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'index' %}admin/">Admin panel</a>
+                                </li>
+                            {% endif %}
+                            {% if user.get_perm_add_post %}
+                                <li><a class="dropdown-item" href="#">Add Post</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><a class="dropdown-item" href="{% url 'users:logout' %}">Log out</a></li>
+                        </ul>
                     </li>
                 {% endif %}
             </ul>

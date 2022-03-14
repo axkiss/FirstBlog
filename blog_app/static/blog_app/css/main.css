@@ -19,7 +19,7 @@ main {
   transition: color 0.3s ease-in;
 }
 
-.base-link:hover {
+.base-link:hover, .base-link:focus {
   color: #0d6efd;
 }
 
@@ -115,7 +115,6 @@ header .modal-content {
 
 
   .crop-img {
-    float: left;
     overflow: hidden;
 
   }
