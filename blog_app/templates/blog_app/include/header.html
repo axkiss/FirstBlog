@@ -56,7 +56,7 @@
                                 </li>
                             {% endif %}
                             {% if user.get_perm_add_post %}
-                                <li><a class="dropdown-item" href="#">Add Post</a></li>
+                                <li><a class="dropdown-item" href="{% url 'add-post' %}">Add Post</a></li>
                             {% endif %}
                             <li><a class="dropdown-item" href="#">Profile</a></li>
                             <li>
