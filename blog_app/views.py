@@ -36,7 +36,6 @@ class AddPostView(View):
     template_name = 'blog_app/add_post.html'
 
     def get(self, request):
-        print(request.user.is_authenticated)
         if request.user.is_authenticated and request.user.get_perm_add_post():
             form = AddPostForm()
             context = {
