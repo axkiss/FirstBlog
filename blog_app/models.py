@@ -18,3 +18,9 @@ class Post(models.Model):
 
     def get_url(self):
         return reverse('post-detail', args=[self.url])
+
+    def save(self, *args, **kwargs):
+        # make unique url of post
+        msec = str(timezone.now().microsecond)
+        self.url = self.url[:73] + '-' + msec
+        super(Post, self).save(*args, **kwargs)
