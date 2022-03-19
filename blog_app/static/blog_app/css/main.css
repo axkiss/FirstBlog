@@ -19,17 +19,22 @@ main {
   transition: color 0.3s ease-in;
 }
 
-.base-link:hover, .base-link:focus {
+.base-link:hover, .base-link:focus{
   color: #0d6efd;
 }
 
-.form-control, .input-group-text, .form-check-input {
+.page-link.active {
+  background-color: rgba(var(--bs-primary-rgb), var(--bs-bg-opacity)) !important;
+  --bs-bg-opacity: 1;
+}
+.form-control, .input-group-text, .form-check-input, .page-link {
   --bs-bg-opacity: 0.1;
   background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
-  color: rgba(var(--bs-light-rgb), var(--bs-text-opacity)) !important;
   border-color: #6c757d !important;
 }
-
+.form-control, .input-group-text, .form-check-input {
+  color: rgba(var(--bs-light-rgb), var(--bs-text-opacity)) !important;
+}
 /*header*/
 .brand-color {
   color: #0d6efd;

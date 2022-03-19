@@ -1,0 +1,49 @@
+{% extends 'blog_app/base.html' %}
+
+{% block title %}Search - FIRSTBLOG{% endblock %}
+
+{% block content %}
+    <!--Full news block-->
+    <div class="col-xl-9 mb-2">
+
+        <!--News body-->
+
+        <div class="news-body fs-5 px-md-5">
+            <h1><b>Search</b></h1>
+            <!--Text of news-->
+            <form class="d-flex my-4" method="get">
+                <input class="form-control form-control-lg me-2" type="text" placeholder="Search" aria-label="Search"
+                       name="q" value="{{ request.GET.q }}" minlength="4">
+                <button class="btn btn-lg btn-outline-primary" type="submit">Search</button>
+            </form>
+
+            <div class="news-text mb-3">
+                {% if count_results %}
+                    <div class="fs-4 fw-bold my-3">Results: {{ count_results }}</div>
+                {% endif %}
+                <div class="list-group">
+                    {% for post in result_posts %}
+                        <a href="{{ post.get_url }}" class="list-group-item bg-transparent base-link">
+                            <div class="w-100">
+                                <h5 class="my-2">{{ post.title|safe }}</h5>
+                                <p class="small">{{ post.description|safe }}</p>
+                            </div>
+
+                        </a>
+                    {% endfor %}
+                    {% if not_found %}
+                        <div class="my-3 mx-auto">Nothing found on query <span
+                                class="fw-bold">"{{ request.GET.q }}"</span>.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+
+{% include './include/pagination.html' with page_obj=result_posts %}
+
+{% endblock %}
