@@ -41,9 +41,9 @@
 
 
         </div>
-
+{% include './include/pagination.html' with page_obj=result_posts %}
     </div>
 
-{% include './include/pagination.html' with page_obj=result_posts %}
+
 
 {% endblock %}
