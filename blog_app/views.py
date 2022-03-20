@@ -11,18 +11,25 @@ import re
 
 # Create your views here.
 class MainView(View):
+    template_name = 'blog_app/home.html'
+    posts_on_page = 10
+
     def get(self, request, *args, **kwargs):
         posts = Post.objects.order_by('-id')
         if len(posts) != 0:
             last_post = posts[0]
         else:
-            last_post = posts
-        posts = posts[1:]
-        content = {
+            last_post = None
+
+        # Make pagination
+        paginator = Paginator(posts[1:], self.posts_on_page)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        context = {
             'last_post': last_post,
-            'posts': posts
+            'posts': page_obj
         }
-        return render(request, 'blog_app/home.html', context=content)
+        return render(request, self.template_name, context=context)
 
 
 class PostDetailView(View):
