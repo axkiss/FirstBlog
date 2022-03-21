@@ -1,3 +1,4 @@
+{% load blog_app_tags %}
 <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark  border-bottom border-secondary">
 
     <div class="container">
@@ -11,15 +12,13 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="base-link" href="#">TEG1</a>
+                {% list_tags pos='head' cnt_head_tag=3 cnt_side_tag=3 as header_tags %}
+                {% for header_tag in header_tags %}
+                    <li class="nav-item">
+                    <a class="base-link" href="{% url 'tag' header_tag.slug %}">{{ header_tag|upper }}</a>
                 </li>
-                <li class="nav-item">
-                    <a class="base-link" href="#">TEG2</a>
-                </li>
-                <li class="nav-item">
-                    <a class="base-link" href="#">TEG3</a>
-                </li>
+                {% endfor %}
+
                 <li class="nav-item">
                     <a class="base-link" href="{% url 'search' %}">ПОИСК</a>
                 </li>
