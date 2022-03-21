@@ -61,8 +61,10 @@ class AddPostView(View):
             url = slugify(title)
             description = form.cleaned_data.get('description')
             image = form.cleaned_data.get('image')
+            tags = form.cleaned_data.get('tag')
             new_post = Post(title=title, url=url, description=description, image=image, author=request.user)
             new_post.save()
+            new_post.tag.add(*tags)
             return redirect(new_post.get_url())
         context = {
             'form': form

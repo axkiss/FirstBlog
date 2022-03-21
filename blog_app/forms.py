@@ -1,5 +1,7 @@
-from ckeditor_uploader.fields import RichTextUploadingFormField
 from django import forms
+from ckeditor_uploader.fields import RichTextUploadingFormField
+from taggit.managers import TagField
+from taggit.forms import TagWidget
 
 
 class AddPostForm(forms.Form):
@@ -15,5 +17,10 @@ class AddPostForm(forms.Form):
         widget=forms.FileInput(attrs={
             'class': "form-control",
             'accept': "image/*",
+        }
+        ))
+    tag = TagField(
+        widget=TagWidget(attrs={
+            'class': "form-control",
         }
         ))
