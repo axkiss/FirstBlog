@@ -6,6 +6,7 @@ from django.utils.html import strip_tags
 from django.template.defaultfilters import slugify
 from .forms import AddPostForm
 from .models import Post
+from taggit.models import Tag
 import re
 
 
@@ -137,3 +138,23 @@ class SearchView(View):
 class AboutUsView(View):
     def get(self, request):
         return render(request, 'blog_app/about.html')
+
+
+class TagView(View):
+    template_name = 'blog_app/tag.html'
+    posts_on_page = 10
+
+    def get(self, request, slug, *args, **kwargs):
+        tag = get_object_or_404(Tag, slug=slug)
+        posts = Post.objects.filter(tag=tag)
+
+        # Make pagination
+        paginator = Paginator(posts, self.posts_on_page)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context = {
+            'title_tag': tag,
+            'posts': page_obj
+        }
+        return render(request, template_name=self.template_name, context=context)

@@ -2,40 +2,11 @@
 
 {% block title %}FIRSTBLOG{% endblock %}
 
-{% block last-post %}
-    <!--Big last news  -->
-    <section class="last-news mb-4">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <div class="card-news bg-dark crop-img">
-                        <img src="{{ last_post.image.url }}" class="card-img" alt="{{ last_post.title }}">
-                        <div class="shadow"></div>
-                        <div class="card-news-img-overlay">
-                            <p class="card-text mt-3">
-                                {% for tag in last_post.tag.all %}
-                                    <a href="#" class="text-decoration-none">
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-light me-1">{{ tag }}</button>
-                                    </a>
-                                {% endfor %}
-                            </p>
-                            <h2 class="card-title"><a class="base-link"
-                                                      href="{{ last_post.get_url }}">{{ last_post.title }}</a></h2>
-
-                            <p class="card-text">{{ last_post.created_at }}</p>
-                        </div>
-                    </div>
-                    {% if last_post is None %}<h2 class="text-center">Nothing. You need to add posts.</h2>{% endif %}
-                </div>
-            </div>
-        </div>
-    </section>
-{% endblock %}
 
 {% block content %}
     <!--List of news-->
     <div class="col-lg-9 mb-5">
+    <h2 class="text-center mb-4">Tag #{{ title_tag }}</h2>
         <div class="row row-cols-1 row-cols-md-2 g-4">
             {% for post in posts %}
                 <div class="col">

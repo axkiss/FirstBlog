@@ -7,5 +7,6 @@ urlpatterns = [
     path('add_post/', views.AddPostView.as_view(), name='add-post'),
     path('search/', views.SearchView.as_view(), name='search'),
     path('<slug:slug>', views.PostDetailView.as_view(), name='post-detail'),
+    path('tag/<slug:slug>', views.TagView.as_view(), name='tag')
 
 ]
