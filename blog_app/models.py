@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from users.models import User
 from django.urls import reverse
 from django.utils import timezone
@@ -23,6 +24,7 @@ class Post(models.Model):
 
     def save(self, *args, **kwargs):
         # make unique url of post
-        msec = str(timezone.now().microsecond)
-        self.url = self.url[:73] + '-' + msec
+        if Post.objects.filter(Q(url=self.url) & ~Q(id=self.id)).exists():
+            msec = str(timezone.now().microsecond)
+            self.url = self.url[:73] + '-' + msec
         super(Post, self).save(*args, **kwargs)
