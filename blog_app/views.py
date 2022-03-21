@@ -34,12 +34,15 @@ class MainView(View):
 
 
 class PostDetailView(View):
+    template_name = 'blog_app/post_detail.html'
+
     def get(self, request, slug, *args, **kwargs):
         post = get_object_or_404(Post, url=slug)
+        post.add_one_view()
         context = {
             'post': post
         }
-        return render(request, 'blog_app/post_detail.html', context=context)
+        return render(request, self.template_name, context=context)
 
 
 class AddPostView(View):

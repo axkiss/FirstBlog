@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, F
 from users.models import User
 from django.urls import reverse
 from django.utils import timezone
@@ -15,12 +15,17 @@ class Post(models.Model):
     created_at = models.DateField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     tag = TaggableManager()
+    views = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
 
     def get_url(self):
         return reverse('post-detail', args=[self.url])
+
+    def add_one_view(self):
+        Post.objects.filter(id=self.id).update(views=F('views') + 1)
+        return None
 
     def save(self, *args, **kwargs):
         # make unique url of post
