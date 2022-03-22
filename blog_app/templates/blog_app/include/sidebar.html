@@ -30,7 +30,7 @@
             {% for aside_post in aside_posts %}
                 <a href="{{ aside_post.get_url }}" class="list-group-item bg-transparent base-link">
                     <div class="d-flex w-100 justify-content-between align-items-center">
-                        <h6 class="mb-1">{{ aside_post.title }}</h6>
+                        <h6 class="mb-0 me-1">{{ aside_post.title }}</h6>
                         <img src="{{ aside_post.image.url }}" width="64"
                              height="64"
                              alt="{{ aside_post.title }}"
