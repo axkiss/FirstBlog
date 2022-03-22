@@ -11,7 +11,7 @@
             <div class="card-news-img-overlay">
                 <h1><b>{{ post.title }}</b></h1>
             </div>
-            <img src="media/{{ post.image }}" class="card-img" alt="{{ post.title }}">
+            <img src="{{ post.image.url }}" class="card-img" alt="{{ post.title }}">
         </div>
         <!--News body-->
         <div class="news-body fs-5 px-md-5">
