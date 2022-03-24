@@ -49,12 +49,12 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end" aria-labelledby="navbarDropdown">
                             <li><span class="dropdown-header fw-bold">Hi, {{ user.get_short_name }}!</span></li>
-                            {% if user.get_is_staff %}
+                            {% if user.is_staff %}
                                 <li>
                                     <a class="dropdown-item" href="{% url 'index' %}admin/">Admin panel</a>
                                 </li>
                             {% endif %}
-                            {% if user.get_perm_add_post %}
+                            {% if user.has_perm_add_post %}
                                 <li><a class="dropdown-item" href="{% url 'add-post' %}">Add Post</a></li>
                             {% endif %}
                             <li><a class="dropdown-item" href="#">Profile</a></li>
