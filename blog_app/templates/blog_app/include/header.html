@@ -30,7 +30,7 @@
             <ul class="nav navbar-nav">
                 {% if not user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="base-link" href="{% url 'users:login' %}">Log in</a>
+                        <a class="base-link" href="{% url 'users:login' %}?next={{ request.path|urlencode }}">Log in</a>
                     </li>
                     <li class="nav-item">
                         <a href="">
