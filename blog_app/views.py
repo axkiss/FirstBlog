@@ -99,9 +99,7 @@ class AddPostView(View):
 
 class SearchView(View):
     template_name = 'blog_app/search.html'
-    len_desc_post = 200
-    posts_on_page = 5
-    max_pages_pagination = 5
+    posts_on_page = 10
 
     def get(self, request):
         search_query = request.GET.get('q')
@@ -110,44 +108,10 @@ class SearchView(View):
 
         # When the page is open for the first time, the search query is empty
         if search_query:
-
             # Find search query in database of posts
-            result_posts = Post.objects.filter(
-                Q(title__icontains=search_query) | Q(description__icontains=search_query))[
-                           :self.posts_on_page * self.max_pages_pagination]
-            if len(result_posts) == 0:
+            result_posts = Post.get_results_search(search_query, posts_on_page=self.posts_on_page)
+            if not result_posts:
                 not_found = True
-            else:
-
-                # Highlight search query in results
-                for post in result_posts:
-
-                    # Remove HTML tags
-                    clean_desc = strip_tags(post.description)
-
-                    # Truncate description of posts
-                    begin = clean_desc.find(search_query)
-                    end = begin + len(search_query)
-                    if begin - self.len_desc_post // 2 > 0:
-                        if len(clean_desc) - end < self.len_desc_post // 2:
-                            new_begin = begin - (
-                                    self.len_desc_post // 2 - (len(clean_desc) - end)) - self.len_desc_post // 2
-                            if new_begin < 0:
-                                short_desc = clean_desc
-                            else:
-                                short_desc = clean_desc[new_begin:]
-                        else:
-                            short_desc = clean_desc[begin - self.len_desc_post // 2:end + self.len_desc_post // 2]
-                    else:
-                        short_desc = clean_desc[:end + self.len_desc_post - begin]
-                    short_desc = '...' + short_desc.strip() + '...'
-
-                    # Highlight all the entry
-                    post.description = re.sub(f"({search_query})", r'<mark>\1</mark>',
-                                              short_desc,
-                                              flags=re.IGNORECASE)
-                    post.title = re.sub(f"({search_query})", r'<mark>\1</mark>',
-                                        post.title, flags=re.IGNORECASE)
 
         # Make pagination
         paginator = Paginator(result_posts, self.posts_on_page)
