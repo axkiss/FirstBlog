@@ -33,3 +33,17 @@ class Post(models.Model):
             msec = str(timezone.now().microsecond)
             self.url = self.url[:73] + '-' + msec
         super(Post, self).save(*args, **kwargs)
+
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    username = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_name')
+    text = models.TextField(max_length=500)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return self.text[:100]
+

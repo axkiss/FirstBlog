@@ -3,6 +3,8 @@ from ckeditor_uploader.fields import RichTextUploadingFormField
 from taggit.managers import TagField
 from taggit.forms import TagWidget
 
+from blog_app.models import Comment
+
 
 class AddPostForm(forms.Form):
     title = forms.CharField(
@@ -24,3 +26,17 @@ class AddPostForm(forms.Form):
             'class': "form-control",
         }
         ))
+
+
+class AddCommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('text',)
+
+        widgets = {
+            'text': forms.Textarea(attrs={
+                'class': "form-control",
+                'rows': 3,
+
+            }),
+        }

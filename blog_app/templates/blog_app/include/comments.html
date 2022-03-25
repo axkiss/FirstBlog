@@ -1,0 +1,65 @@
+<!--Button 'Leave a comment'-->
+<div class="text-center mt-4">
+    <a class="btn btn-lg btn-outline-primary" data-bs-toggle="collapse" href="#leave-comment"
+       role="button"
+       aria-expanded="false" aria-controls="leave-comment">
+        Leave a comment
+    </a></div>
+<div class="collapse" id="leave-comment">
+    {% if not user.is_authenticated %}
+        <p class="my-3 text-center"><a href="{% url 'users:register' %}">Registered</a> or <a
+                href="{% url 'users:login' %}?next={{ request.path|urlencode }}">log in</a> to leave a comment</p>
+    {% endif %}
+    {% if user.is_authenticated %}
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Your comment</label>
+                {{ comment_form.text }}
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-outline-primary">Submit</button>
+            </div>
+        </form>
+    {% endif %}
+
+
+</div>
+
+<!--List of comments-->
+{% if count_comments %}
+    <div class="fs-4 fw-bold my-3">Comments {{ count_comments }}</div>
+{% else %}
+    <div class="fs-4 text-center fw-bold my-3 ">No comments. Be the first!</div>
+{% endif %}
+{% for comment in comments %}
+    <div class="d-flex flex-start mb-4">
+        <div class="d-flex flex-column"><img
+                class="rounded-circle mx-auto"
+                src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp"
+                alt="avatar"
+                width="65"
+                height="65"
+        />
+            {% if comment.username.is_staff %}
+                <div class="text-center"><span class="fs-6 fw-lighter p-1 text-primary text-opacity-75">Admin</span></div>
+            {% endif %}
+            {% if not comment.username.is_staff %}
+                <div class="text-center"><span class="fs-6 fw-lighter p-1">{{ comment.username.get_group }}</span></div>
+            {% endif %}
+
+
+        </div>
+
+
+        <div class="flex-grow-1 flex-shrink-1 ms-3">
+            <p class="mb-1">
+                {{ comment.username.get_full_name }} <span
+                    class="fs-6 fw-light text-white-50">- {{ comment.created_at }}</span>
+            </p>
+            <p class="small mb-0">
+                {{ comment.text }}
+            </p>
+        </div>
+    </div>
+{% endfor %}
