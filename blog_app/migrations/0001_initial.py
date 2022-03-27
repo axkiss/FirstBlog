@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=200)),
                 ('url', models.SlugField(default='', max_length=80)),
                 ('description', ckeditor_uploader.fields.RichTextUploadingField()),
-                ('image', models.ImageField(upload_to='')),
+                ('image', models.ImageField(upload_to='post/%Y/%m/%d/')),
                 ('created_at', models.DateField(default=django.utils.timezone.now)),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
