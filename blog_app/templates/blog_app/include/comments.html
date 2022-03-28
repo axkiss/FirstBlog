@@ -34,15 +34,21 @@
 {% endif %}
 {% for comment in comments %}
     <div class="d-flex flex-start mb-4">
-        <div class="d-flex flex-column"><img
-                class="rounded-circle mx-auto"
-                src="https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(10).webp"
-                alt="avatar"
-                width="65"
-                height="65"
-        />
+        <div class="d-flex flex-column">
+            {% if comment.username.extrauserprofile.avatar %}
+                <img
+                        class="rounded-circle"
+                        src="{{ comment.username.extrauserprofile.avatar.url }}"
+                        alt="avatar"
+                        width="65"
+                        height="65"
+                />
+            {% else %}
+                <div class="avatar_holder-65 float-lg-end mx-auto fs-3">{{ comment.username.first_name|title|first }} {{ comment.username.last_name|title|first }}</div>
+            {% endif %}
             {% if comment.username.is_staff %}
-                <div class="text-center"><span class="fs-6 fw-lighter p-1 text-primary text-opacity-75">Admin</span></div>
+                <div class="text-center"><span class="fs-6 fw-lighter p-1 text-primary text-opacity-75">Admin</span>
+                </div>
             {% endif %}
             {% if not comment.username.is_staff %}
                 <div class="text-center"><span class="fs-6 fw-lighter p-1">{{ comment.username.get_group }}</span></div>
@@ -54,8 +60,8 @@
 
         <div class="flex-grow-1 flex-shrink-1 ms-3">
             <p class="mb-1">
-                {{ comment.username.get_full_name }} <span
-                    class="fs-6 fw-light text-white-50">- {{ comment.created_at }}</span>
+                <a class="text-decoration-none text-light" href="{% url 'users:profile' username=comment.username %}">{{ comment.username.get_full_name }}</a>
+                <span class="fs-6 fw-light text-white-50">- {{ comment.created_at }}</span>
             </p>
             <p class="small mb-0">
                 {{ comment.text }}
