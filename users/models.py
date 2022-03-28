@@ -11,3 +11,14 @@ class User(AbstractUser):
 
     def get_group(self):
         return self.groups.all().first()
+
+
+def user_directory_path(instance, filename):
+    first_letter = instance.user.username[0].lower()
+    return f'avatars/{first_letter}/{filename}'
+
+
+class ExtraUserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(default=None, upload_to=user_directory_path, blank=True, null=True)
+    about_me = models.TextField(default=None, max_length=200, blank=True, null=True)
