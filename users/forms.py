@@ -2,7 +2,8 @@ from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm, PasswordResetForm, \
     SetPasswordForm
 from django import forms
-from django.utils.translation import gettext, gettext_lazy as _
+
+from users.models import ExtraUserProfile
 
 User = get_user_model()
 
@@ -101,3 +102,29 @@ class MySetPasswordForm(SetPasswordForm):
             'autocomplete': 'new-password',
             'class': "form-control"}),
     )
+
+
+class EditUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+        widgets = {
+            'first_name': forms.TextInput(attrs={'class': "form-control",
+                                                 'required': ''}),
+            'last_name': forms.TextInput(attrs={'class': "form-control",
+                                                'required': ''}),
+            'email': forms.EmailInput(attrs={'class': "form-control",
+                                             'required': ''}),
+        }
+
+
+class EditExtraUserProfileForm(forms.ModelForm):
+    class Meta:
+        model = ExtraUserProfile
+        fields = ('avatar', 'about_me')
+        widgets = {
+            'avatar': forms.FileInput(attrs={'class': "form-control",
+                                             'accept': "image/*", }),
+            'about_me': forms.Textarea(attrs={'class': "form-control",
+                                              'rows': 3, }),
+        }
