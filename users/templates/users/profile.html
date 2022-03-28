@@ -1,0 +1,55 @@
+{% extends 'blog_app/base.html' %}
+
+{% block title %}Register - FIRSTBLOG{% endblock %}
+
+{% block content %}
+    <div class="col-xxl-5 col-xl-6 col-lg-7 col-md-9 mb-5">
+        <div class="news-body fs-5 px-md-5">
+            <h1 class="mb-4 text-center"><b>Profile - {{ user_profile.username }}</b></h1>
+            <div class="row mb-3 ">
+                <div class="col-md-6 col-sm-12 text-md-end text-center">
+                    {% if user_profile.extrauserprofile.avatar %}
+                        <img
+                                class="rounded-circle"
+                                src="{{ user_profile.extrauserprofile.avatar.url }}"
+                                alt="avatar"
+                                width="150"
+                                height="150"
+                        />
+                    {% else %}
+                        <div class="avatar_holder-150 float-lg-end mx-auto fs-1">{{ user_profile.first_name|title|first }} {{ user_profile.last_name|title|first }}</div>
+                    {% endif %}
+
+                </div>
+                <div class="col-md-6 col-sm-12 text-md-start text-center align-self-center">
+                    {% if user_profile.is_staff %}
+                        <div class="fw-lighter mb-2 text-primary text-opacity-75">Admin</div>
+                    {% endif %}
+                    {% if not user_profile.is_staff %}
+                        <div class="fw-lighter mb-2">{{ user_profile.get_group }}</div>
+                    {% endif %}
+                    <div class="mb-2">{{ user_profile.first_name }}</div>
+                    <div class="mb-2">{{ user_profile.last_name }}</div>
+                    <div class="mb-2">{{ user_profile.email }}</div>
+                </div>
+            </div>
+            <div class="text-center">About me</div>
+            <div class="mb-2">
+                {% if user_profile.extrauserprofile.about_me %}
+                    <span class="fw-light">{{ user_profile.extrauserprofile.about_me }}</span>
+                {% else %}
+                    <span class="fw-light">No information :(</span>
+                {% endif %}
+            </div>
+            {% if user.get_username == user_profile.username %}
+                <div class="mt-3 text-center">
+                    <a href="{% url 'users:edit_profile' username=user_profile.username %}">
+                        <button type="submit" class="btn btn-outline-primary w-50">Edit profile</button>
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+
+    </div>
+
+{% endblock %}

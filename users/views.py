@@ -1,10 +1,12 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
     PasswordResetCompleteView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
-from .forms import MyAuthenticationForm, MyUserCreationForm, MyPasswordResetForm, MySetPasswordForm
+from .forms import MyAuthenticationForm, MyUserCreationForm, MyPasswordResetForm, MySetPasswordForm, EditUserForm, \
+    EditExtraUserProfileForm
+from .models import User, ExtraUserProfile
 
 
 class RegisterView(View):
@@ -26,6 +28,7 @@ class RegisterView(View):
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user)
+            ExtraUserProfile(user=request.user).save()
             return redirect('index')
         context = {
             'form': form
@@ -58,3 +61,40 @@ class MyPasswordResetConfirmView(PasswordResetConfirmView):
 class MyPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'users/password_reset_complete.html'
 
+
+class UserProfileView(View):
+    template_name = 'users/profile.html'
+
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        context = {
+            'user_profile': user
+        }
+        return render(request, template_name=self.template_name, context=context)
+
+
+class EditUserProfileView(View):
+    template_name = 'users/edit_profile.html'
+
+    def get(self, request, username):
+        if username == request.user.get_username():
+            user = get_object_or_404(User, username=username)
+            extra_user_profile, created = ExtraUserProfile.objects.get_or_create(user=user)
+            main_user_form = EditUserForm(instance=user)
+            extra_user_form = EditExtraUserProfileForm(instance=extra_user_profile)
+            context = {
+                'main_user_form': main_user_form,
+                'extra_user_form': extra_user_form,
+            }
+            return render(request, template_name=self.template_name, context=context)
+        return redirect('users:profile', username=username)
+
+    def post(self, request, username):
+        user = get_object_or_404(User, username=username)
+        userprofile = get_object_or_404(ExtraUserProfile, user=user)
+        main_user_form = EditUserForm(request.POST, instance=user)
+        extra_user_form = EditExtraUserProfileForm(request.POST, request.FILES, instance=userprofile)
+        if main_user_form.is_valid() and extra_user_form.is_valid():
+            main_user_form.save()
+            extra_user_form.save()
+            return redirect('users:profile', username=username)
