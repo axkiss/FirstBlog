@@ -1,6 +1,7 @@
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
     PasswordResetCompleteView
+from django.contrib.auth.models import Group
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views import View
@@ -28,7 +29,11 @@ class RegisterView(View):
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
             login(request, user)
+            # Add extra profile to user
             ExtraUserProfile(user=request.user).save()
+            # Add user to group 'Reader'
+            group, created = Group.objects.get_or_create(name='Reader')
+            request.user.groups.add(group)
             return redirect('index')
         context = {
             'form': form
@@ -97,4 +102,4 @@ class EditUserProfileView(View):
         if main_user_form.is_valid() and extra_user_form.is_valid():
             main_user_form.save()
             extra_user_form.save()
-            return redirect('users:profile', username=username)
+        return redirect('users:profile', username=username)
