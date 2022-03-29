@@ -22,3 +22,6 @@ class ExtraUserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(default=None, upload_to=user_directory_path, blank=True, null=True)
     about_me = models.TextField(default=None, max_length=200, blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.user.username} extra profile'
