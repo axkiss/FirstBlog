@@ -137,7 +137,7 @@ class TagView(View):
 
     def get(self, request, slug, *args, **kwargs):
         tag = get_object_or_404(Tag, slug=slug)
-        posts = Post.objects.filter(tag=tag)
+        posts = Post.objects.filter(tag=tag).order_by('-id')
 
         # Make pagination
         paginator = Paginator(posts, self.posts_on_page)
