@@ -35,11 +35,12 @@ class Post(models.Model):
     def get_results_search(search_query, len_desc_post=200, posts_on_page=10, max_pages_pagination=5):
         # Find search query in database of posts
         result_posts = Post.objects.filter(
-            Q(title__icontains=search_query) | Q(description__icontains=search_query))[
-                       :posts_on_page * max_pages_pagination]
+            Q(title__icontains=search_query) | Q(description__icontains=search_query)).order_by('-id') \
+            [:posts_on_page * max_pages_pagination]
         if len(result_posts) == 0:
             return ''
         else:
+
             # Highlight search query in results
             for post in result_posts:
 
