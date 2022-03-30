@@ -4,13 +4,13 @@
     <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
     <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
 {% endblock %}
-{% block title %}Add post - FIRSTBLOG{% endblock %}
+{% block title %}{{ title }} - FIRSTBLOG{% endblock %}
 
 {% block content %}
     <div class="col-xl-9 mb-5">
     <!--Full news block-->
     <div class="news-body fs-5 px-md-5">
-        <h1><b>Add post</b></h1>
+        <h1><b>{{ title }}</b></h1>
         <!--Text of news-->
         <div class="news-text mb-3">
             {% if form.errors %}

@@ -9,7 +9,12 @@
         <div class="card-news text-light bg-dark crop-img w-100">
             <div class="shadow"></div>
             <div class="card-news-img-overlay">
-                <h1><b>{{ post.title }}</b></h1>
+                <h1>
+                    <b>{{ post.title }}</b>
+                    {% if user.has_perm_edit_post %}
+                    <a href="{% url 'edit_post' slug=post.url %}"><button class="btn btn-sm btn-outline-primary">EDIT</button></a>
+                    {% endif %}
+                </h1>
             </div>
             <img src="{{ post.image.url }}" class="card-img" alt="{{ post.title }}">
         </div>
@@ -34,6 +39,9 @@
             <!--Text of news-->
             <div class="news-text mb-3 border-3 border-bottom border-secondary">
                 {{ post.description|safe }}
+                {% if edited %}
+                <div class="text-end fst-italic fw-light fs-6 text-muted">edited at {{ post.edited_at }}</div>
+                {% endif %}
             </div>
             <!--News share block-->
             <div class="news-share d-flex w-100  justify-content-evenly align-items-center pb-3 mb-3 border-3 border-bottom border-secondary text-light">

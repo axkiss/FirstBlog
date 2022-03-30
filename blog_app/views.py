@@ -1,3 +1,5 @@
+import datetime
+
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -41,6 +43,7 @@ class PostDetailView(View):
     def get(self, request, slug, *args, **kwargs):
         post = get_object_or_404(Post, url=slug)
         post.add_one_view()
+        edited = (post.edited_at - post.created_at) > datetime.timedelta(minutes=1)
         comment_form = AddCommentForm()
         comments = post.comments.all()
 
@@ -51,6 +54,7 @@ class PostDetailView(View):
 
         context = {
             'post': post,
+            'edited': edited,
             'comment_form': comment_form,
             'comments': page_obj,
             'count_comments': len(comments),
@@ -69,11 +73,13 @@ class PostDetailView(View):
 
 class AddPostView(View):
     template_name = 'blog_app/add_post.html'
+    title = 'Add post'
 
     def get(self, request):
         if request.user.is_authenticated and request.user.has_perm_add_post():
             form = AddPostForm()
             context = {
+                'title': self.title,
                 'form': form
             }
             return render(request, template_name=self.template_name, context=context)
@@ -92,6 +98,43 @@ class AddPostView(View):
             new_post.tag.add(*tags)
             return redirect(new_post.get_url())
         context = {
+            'title': self.title,
+            'form': form
+        }
+        return render(request, template_name=self.template_name, context=context)
+
+
+class EditPostView(View):
+    template_name = 'blog_app/add_post.html'
+    title = 'Edit post'
+
+    def get(self, request, slug):
+        if request.user.is_authenticated and request.user.has_perm_edit_post():
+            post = get_object_or_404(Post, url=slug)
+            form = AddPostForm(instance=post)
+            context = {
+                'title': self.title,
+                'form': form
+            }
+            return render(request, template_name=self.template_name, context=context)
+        return redirect('post_detail', slug=slug)
+
+    def post(self, request, slug):
+        post = get_object_or_404(Post, url=slug)
+        form = AddPostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid() and request.user.is_authenticated and request.user.has_perm_edit_post():
+            post.title = form.cleaned_data.get('title')
+            post.url = slugify(post.title)
+            post.description = form.cleaned_data.get('description')
+            post.image = form.cleaned_data.get('image')
+            tags = form.cleaned_data.get('tag')
+            if list(post.tag.names()) != tags:
+                post.tag.clear()
+                post.tag.add(*tags)
+            post.save()
+            return redirect(post.get_url())
+        context = {
+            'title': self.title,
             'form': form
         }
         return render(request, template_name=self.template_name, context=context)
