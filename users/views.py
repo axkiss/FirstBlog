@@ -2,12 +2,22 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
     PasswordResetCompleteView
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.http import urlsafe_base64_decode
 from django.views import View
+from django.contrib.auth.tokens import default_token_generator as token_generator
+
 from .forms import MyAuthenticationForm, MyUserCreationForm, MyPasswordResetForm, MySetPasswordForm, EditUserForm, \
     EditExtraUserProfileForm
 from .models import User, ExtraUserProfile
+from .utils import send_email_for_verify
+
+
+class MyLoginView(LoginView):
+    form_class = MyAuthenticationForm
+    template_name = 'users/login.html'
 
 
 class RegisterView(View):
@@ -28,22 +38,54 @@ class RegisterView(View):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
-            login(request, user)
-            # Add extra profile to user
-            ExtraUserProfile(user=request.user).save()
-            # Add user to group 'Reader'
-            group, created = Group.objects.get_or_create(name='Reader')
-            request.user.groups.add(group)
-            return redirect('index')
+            send_email_for_verify(request, user)
+            return redirect('users:email_confirm')
         context = {
             'form': form
         }
         return render(request, template_name=self.template_name, context=context)
 
 
-class MyLoginView(LoginView):
-    form_class = MyAuthenticationForm
-    template_name = 'users/login.html'
+class EmailConfirmView(View):
+    template_name = 'users/email_confirm.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
+
+
+class EmailConfirmVerifyView(View):
+
+    def get(self, request, uidb64, token):
+        user = self.get_user(uidb64)
+        if user is not None \
+                and token_generator.check_token(user, token):
+            user.email_verify = True
+            user.save()
+            login(request, user)
+            # Add extra profile to user
+            ExtraUserProfile.objects.get_or_create(user=user)
+            # Add user to group 'Reader'
+            group, created = Group.objects.get_or_create(name='Reader')
+            user.groups.add(group)
+            return redirect('users:profile', username=user.username)
+        return redirect('users:email_confirm_invalid')
+
+    @staticmethod
+    def get_user(uidb64):
+        try:
+            # urlsafe_base64_decode() decodes to bytestring
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist, ValidationError):
+            user = None
+        return user
+
+
+class EmailConfirmInvalidView(View):
+    template_name = 'users/email_confirm_invalid.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
 
 
 class MyPasswordResetView(PasswordResetView):
