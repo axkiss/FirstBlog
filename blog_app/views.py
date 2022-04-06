@@ -1,19 +1,18 @@
 import datetime
-
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
-from django.utils.html import strip_tags
 from django.template.defaultfilters import slugify
-from .forms import AddPostForm, AddCommentForm
+from django.core.mail import BadHeaderError
+from blog_proj.settings import EMAIL_FEEDBACK
+from .forms import AddPostForm, AddCommentForm, FeedBackForm
 from .models import Post, Comment
 from taggit.models import Tag
-import re
+
+from .utils import send_feedback
 
 
-# Create your views here.
 class MainView(View):
     template_name = 'blog_app/home.html'
     posts_on_page = 10
@@ -169,11 +168,6 @@ class SearchView(View):
         return render(request, template_name=self.template_name, context=context)
 
 
-class AboutUsView(View):
-    def get(self, request):
-        return render(request, 'blog_app/about.html')
-
-
 class TagView(View):
     template_name = 'blog_app/tag.html'
     posts_on_page = 10
@@ -192,3 +186,51 @@ class TagView(View):
             'posts': page_obj
         }
         return render(request, template_name=self.template_name, context=context)
+
+
+class AboutUsView(View):
+    template_name = 'blog_app/about.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
+
+
+class FeedBackView(View):
+    template_name = 'blog_app/feedback.html'
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            form = FeedBackForm(
+                initial={
+                    'name': request.user.get_full_name(),
+                    'email': request.user.email
+                })
+        else:
+            form = FeedBackForm()
+
+        context = {
+            'form': form
+        }
+        return render(request, template_name=self.template_name, context=context)
+
+    def post(self, request):
+        form = FeedBackForm(request.POST)
+
+        if form.is_valid():
+            try:
+                send_feedback(request, form.cleaned_data, EMAIL_FEEDBACK)
+            except BadHeaderError:
+                return HttpResponse('Invalid header found.')
+            return redirect('feedback_success')
+
+        context = {
+            'form': form
+        }
+        return render(request, template_name=self.template_name, context=context)
+
+
+class FeedBackSuccsesView(View):
+    template_name = 'blog_app/feedback_success.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
