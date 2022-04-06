@@ -16,7 +16,11 @@ def get_list_tags(pos, cnt_head_tag, cnt_side_tag):
 
 @register.simple_tag(name='popular_posts')
 def get_popular_posts(days, cnt_posts):
-    end_date = timezone.now()
+    end_date = Post.objects.last().created_at
     start_date = end_date - timezone.timedelta(days=days)
-    return Post.objects.filter(
+    popular_posts = Post.objects.filter(
         created_at__range=(start_date, end_date)).order_by('-views')[:cnt_posts]
+    # if no publications for a long time
+    if len(popular_posts) < cnt_posts:
+        popular_posts = Post.objects.order_by('-views', '-created_at')[:cnt_posts]
+    return popular_posts
