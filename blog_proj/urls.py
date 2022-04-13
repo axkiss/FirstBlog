@@ -26,6 +26,7 @@ urlpatterns = [
     path('accounts/', include('users.urls', namespace='users')),
     # WYSIWYG-editor posts
     path("ckeditor/", include('ckeditor_uploader.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),
 ]
 
 if settings.DEBUG:
