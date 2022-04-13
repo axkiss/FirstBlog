@@ -37,7 +37,7 @@ class MainView(View):
 
 class PostDetailView(View):
     template_name = 'blog_app/post_detail.html'
-    comments_on_page = 2
+    comments_on_page = 20
 
     def get(self, request, slug, *args, **kwargs):
         post = get_object_or_404(Post, url=slug)
