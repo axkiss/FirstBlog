@@ -5,6 +5,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.template.defaultfilters import slugify
 from django.core.mail import BadHeaderError
+from django.views.generic import TemplateView
+
 from blog_proj.settings import EMAIL_FEEDBACK
 from .forms import AddPostForm, AddCommentForm, FeedBackForm
 from .models import Post, Comment
@@ -188,11 +190,8 @@ class TagView(View):
         return render(request, template_name=self.template_name, context=context)
 
 
-class AboutUsView(View):
+class AboutUsView(TemplateView):
     template_name = 'blog_app/about.html'
-
-    def get(self, request):
-        return render(request, template_name=self.template_name)
 
 
 class FeedBackView(View):
@@ -229,8 +228,9 @@ class FeedBackView(View):
         return render(request, template_name=self.template_name, context=context)
 
 
-class FeedBackSuccsesView(View):
+class FeedBackSuccsesView(TemplateView):
     template_name = 'blog_app/feedback_success.html'
 
-    def get(self, request):
-        return render(request, template_name=self.template_name)
+
+class TermsConditionsView(TemplateView):
+    template_name = 'blog_app/terms_and_conditions.html'
