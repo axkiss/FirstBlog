@@ -144,4 +144,10 @@ class EditUserProfileView(View):
         if main_user_form.is_valid() and extra_user_form.is_valid():
             main_user_form.save()
             extra_user_form.save()
-        return redirect('users:profile', username=username)
+            return redirect('users:profile', username=username)
+
+        context = {
+            'main_user_form': main_user_form,
+            'extra_user_form': extra_user_form,
+        }
+        return render(request, template_name=self.template_name, context=context)

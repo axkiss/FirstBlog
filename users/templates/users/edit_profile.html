@@ -7,6 +7,34 @@
         <div class="news-body fs-5 px-md-5">
             <h1 class="mb-4 text-center"><b>Profile - {{ user.get_username }}</b></h1>
             <div class="mb-3 ">
+                {% if main_user_form.errors %}
+                    {% for field in main_user_form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger text-center small" role="alert">
+                                <span class="fw-bold">{{ field.name}}:</span> {{ error|escape|lower }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in main_user_form.non_field_errors %}
+                        <div class="alert alert-warning text-center small" role="alert">
+                            <span class="fw-bold">{{ field.name}}:</span> {{ error|escape|lower }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% if extra_user_form.errors %}
+                    {% for field in extra_user_form %}
+                        {% for error in field.errors %}
+                            <div class="alert alert-danger text-center small" role="alert">
+                                {{ error|escape }}
+                            </div>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in extra_user_form.non_field_errors %}
+                        <div class="alert alert-warning text-center small" role="alert">
+                            {{ error|escape }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
                 <form class="needs-validation mb-3" method="post" action="{% url 'users:edit_profile' username=user.get_username %}"  enctype="multipart/form-data" novalidate>
                     {% csrf_token %}
                     <div class="mb-2 row">
