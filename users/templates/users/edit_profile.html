@@ -10,27 +10,27 @@
                 {% if main_user_form.errors %}
                     {% for field in main_user_form %}
                         {% for error in field.errors %}
-                            <div class="alert alert-danger text-center small" role="alert">
-                                <span class="fw-bold">{{ field.name}}:</span> {{ error|escape|lower }}
+                            <div class="alert alert-warning text-center small" role="alert">
+                                <span class="fw-bold">{{ field.name}}:</span> {{ error|escape }}
                             </div>
                         {% endfor %}
                     {% endfor %}
                     {% for error in main_user_form.non_field_errors %}
-                        <div class="alert alert-warning text-center small" role="alert">
-                            <span class="fw-bold">{{ field.name}}:</span> {{ error|escape|lower }}
+                        <div class="alert alert-danger text-center small" role="alert">
+                            {{ error|escape }}
                         </div>
                     {% endfor %}
                 {% endif %}
             {% if extra_user_form.errors %}
                     {% for field in extra_user_form %}
                         {% for error in field.errors %}
-                            <div class="alert alert-danger text-center small" role="alert">
-                                {{ error|escape }}
+                            <div class="alert alert-warning text-center small" role="alert">
+                                <span class="fw-bold">{{ field.name }}:</span> {{ error|escape }}
                             </div>
                         {% endfor %}
                     {% endfor %}
                     {% for error in extra_user_form.non_field_errors %}
-                        <div class="alert alert-warning text-center small" role="alert">
+                        <div class="alert alert-danger text-center small" role="alert">
                             {{ error|escape }}
                         </div>
                     {% endfor %}
