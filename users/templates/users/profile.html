@@ -7,15 +7,15 @@
         <div class="news-body fs-5 px-md-5">
             <h1 class="mb-4 text-center"><b>Profile - {{ user_profile.username }}</b></h1>
             <div class="row mb-3 ">
-                <div class="col-md-6 col-sm-12 text-md-end text-center">
+                <div class="col-md-6 col-sm-12">
                     {% if user_profile.extrauserprofile.avatar %}
+                        <div class="avatar_holder-150 float-lg-end mx-auto">
                         <img
-                                class="rounded-circle"
                                 src="{{ user_profile.extrauserprofile.avatar.url }}"
                                 alt="avatar"
-                                width="150"
-                                height="150"
-                        />
+                                width="auto"
+                                height="auto"
+                        /></div>
                     {% else %}
                         <div class="avatar_holder-150 float-lg-end mx-auto fs-1">{{ user_profile.first_name|title|first }} {{ user_profile.last_name|title|first }}</div>
                     {% endif %}

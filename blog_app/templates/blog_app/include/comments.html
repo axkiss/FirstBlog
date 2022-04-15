@@ -36,13 +36,14 @@
     <div class="d-flex flex-start mb-4">
         <div class="d-flex flex-column">
             {% if comment.username.extrauserprofile.avatar %}
+                <div class="avatar_holder-65">
                 <img
-                        class="rounded-circle"
                         src="{{ comment.username.extrauserprofile.avatar.url }}"
                         alt="avatar"
                         width="65"
                         height="65"
                 />
+                </div>
             {% else %}
                 <div class="avatar_holder-65 float-lg-end mx-auto fs-3">{{ comment.username.first_name|title|first }} {{ comment.username.last_name|title|first }}</div>
             {% endif %}

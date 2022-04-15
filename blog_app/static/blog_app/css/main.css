@@ -175,16 +175,17 @@ header .modal-content {
 .avatar_holder-150 {
     width: 150px;
     height: 150px;
-    line-height: 150px;
+    line-height: 145px;
 }
 .avatar_holder-65 {
     width: 65px;
     height: 65px;
-    line-height: 65px;
+    line-height: 61px;
 }
 
 .avatar_holder-65, .avatar_holder-150 {
     border-radius: 50%;
+    overflow: hidden;
     text-align: center;
     background: grey;
 }
