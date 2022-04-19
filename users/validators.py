@@ -1,12 +1,13 @@
 from django.utils.deconstruct import deconstructible
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 
 
 @deconstructible()
 class ImageSizeValidator:
     messages = {
-        'big': 'Your img %(img_width)s x %(img_height)s is too big. Max size %(max_width)s x %(max_height)s',
-        'small': 'Your img %(img_width)s x %(img_height)s is too small. Min size %(min_width)s x %(min_height)s',
+        'big': _('Your img %(img_width)s x %(img_height)s is too big. Max size %(max_width)s x %(max_height)s'),
+        'small': _('Your img %(img_width)s x %(img_height)s is too small. Min size %(min_width)s x %(min_height)s'),
     }
 
     def __init__(self, min_size: tuple = (None, None), max_size: tuple = (None, None), messages: dict = None):
