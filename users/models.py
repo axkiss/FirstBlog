@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from users.utils import make_square_img
+from users.validators import ImageSizeValidator
 
 
 class User(AbstractUser):
@@ -27,7 +28,9 @@ def user_directory_path(instance, filename):
 
 class ExtraUserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    avatar = models.ImageField(default=None, upload_to=user_directory_path, blank=True, null=True)
+    avatar = models.ImageField(default=None, upload_to=user_directory_path,
+                               validators=[ImageSizeValidator(min_size=(65, 65), max_size=(1500, 1500))], blank=True,
+                               null=True)
     about_me = models.TextField(default=None, max_length=200, blank=True, null=True)
 
     def __str__(self):
@@ -37,4 +40,3 @@ class ExtraUserProfile(models.Model):
         super().save(*args, **kwargs)
         if self.avatar:
             make_square_img(150, self.avatar.path)
-
