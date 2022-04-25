@@ -16,6 +16,9 @@ def get_list_tags(pos, cnt_head_tag, cnt_side_tag):
 
 @register.simple_tag(name='popular_posts')
 def get_popular_posts(days, cnt_posts):
+    # if blog hasn't publications
+    if not Post.objects.last():
+        return ''
     end_date = Post.objects.last().created_at
     start_date = end_date - timezone.timedelta(days=days)
     popular_posts = Post.objects.filter(
