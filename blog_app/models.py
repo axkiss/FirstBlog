@@ -1,5 +1,10 @@
+import os
 import re
-
+from io import BytesIO
+from PIL import Image
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.files.base import ContentFile
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import Q, F
 from django.utils.html import strip_tags
@@ -10,12 +15,16 @@ from django.utils import timezone
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 
+from users.utils import crop_img_to_square
+
 
 class Post(models.Model):
     title = models.CharField(max_length=200)
     url = models.SlugField(default='', null=False, db_index=True, max_length=80)
     description = RichTextUploadingField()
-    image = models.ImageField(upload_to='post/%Y/%m/%d/')
+    image = models.ImageField(upload_to='post/%Y/%m/%d/',
+                              validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
+    thumbnail = models.ImageField(upload_to='post/%Y/%m/%d/', editable=False)
     created_at = models.DateTimeField(default=timezone.now)
     edited_at = models.DateTimeField(auto_now=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -73,11 +82,52 @@ class Post(models.Model):
                                     post.title, flags=re.IGNORECASE)
             return result_posts
 
+    def create_thumbnail(self, height_side):
+        # If the image of the post did not change --> break
+        if self.thumbnail:
+            try:
+                old_image = Post.objects.get(id=self.id).image
+            except ObjectDoesNotExist:
+                return
+            if self.image.name == old_image.name:
+                return
+
+        # Get name for thumbnail
+        thumb_name, thumb_extension = os.path.splitext(self.image.name)
+        thumb_name = os.path.basename(thumb_name)
+        thumb_extension = thumb_extension.lower()
+        thumb_filename = thumb_name + '_thumb' + thumb_extension
+
+        # Define image file type
+        if thumb_extension in ['.jpg', '.jpeg']:
+            FTYPE = 'JPEG'
+        elif thumb_extension == '.png':
+            FTYPE = 'PNG'
+        else:
+            raise TypeError('Unrecognized image file type')
+
+        # Open, crop and resize image
+        pic = Image.open(self.image)
+        pic = crop_img_to_square(pic)
+        pic.thumbnail((height_side, height_side), Image.LANCZOS)
+
+        # Save thumbnail to in-memory file as StringIO
+        temp_thumb = BytesIO()
+        pic.save(temp_thumb, FTYPE)
+        temp_thumb.seek(0)
+
+        # set save=False, otherwise it will run in an infinite loop
+        self.thumbnail.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
+        temp_thumb.close()
+
     def save(self, *args, **kwargs):
         # make unique url of post
         if Post.objects.filter(Q(url=self.url) & ~Q(id=self.id)).exists():
             msec = str(timezone.now().microsecond)
             self.url = self.url[:73] + '-' + msec
+
+        # create thumbnail from post image
+        self.create_thumbnail(100)
         super(Post, self).save(*args, **kwargs)
 
 
