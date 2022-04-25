@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from users.models import ExtraUserProfile
@@ -12,7 +13,7 @@ def delete_old_avatar(sender, instance, **kwargs):
 
     try:
         old_avatar = sender.objects.get(id=instance.id).avatar
-    except sender.DoNotExist:
+    except ObjectDoesNotExist:
         return False
 
     # compare avatars and delete the oldest
