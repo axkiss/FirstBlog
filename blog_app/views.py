@@ -235,3 +235,7 @@ class FeedBackSuccsesView(TemplateView):
 
 class TermsConditionsView(TemplateView):
     template_name = 'blog_app/terms_and_conditions.html'
+
+
+def custom_page_not_found_view(request, exception):
+    return render(request, "blog_app/errors/404.html", {})

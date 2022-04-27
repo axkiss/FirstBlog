@@ -1,0 +1,18 @@
+{% extends 'blog_app/base.html' %}
+
+{% block title %}404 Not Found - FIRSTBLOG{% endblock %}
+
+{% block content %}
+    <div class="col-xl-9 mb-5">
+        <div class="news-body fs-5 px-md-5">
+            <h1><b>404 Not Found</b></h1>
+            <div class="news-text mb-3">
+                <p>User! It seems that you went the wrong way. Perhaps we deleted the material at this address, or maybe
+                    it has never been here. Go to the main page, there is definitely something there.</p>
+                <div class="text-center"><a href="{% url 'index' %}">
+                    <button class="btn btn-outline-primary w-50">Main page</button>
+                </a></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
