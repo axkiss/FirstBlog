@@ -16,6 +16,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
 
 from users.utils import crop_img_to_square
+from users.validators import ImageSizeValidator
 
 
 class Post(models.Model):
@@ -23,7 +24,8 @@ class Post(models.Model):
     url = models.SlugField(default='', null=False, db_index=True, max_length=80)
     description = RichTextUploadingField()
     image = models.ImageField(upload_to='post/%Y/%m/%d/',
-                              validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png'])])
+                              validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png']),
+                                          ImageSizeValidator(min_size=(1200, 900), max_size=(4000, 3000))])
     thumbnail = models.ImageField(upload_to='post/%Y/%m/%d/', editable=False)
     created_at = models.DateTimeField(default=timezone.now)
     edited_at = models.DateTimeField(auto_now=True)
