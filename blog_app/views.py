@@ -1,4 +1,5 @@
 import datetime
+import unidecode
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
@@ -125,7 +126,7 @@ class EditPostView(View):
         form = AddPostForm(request.POST, request.FILES, instance=post)
         if form.is_valid() and request.user.is_authenticated and request.user.has_perm_edit_post():
             post.title = form.cleaned_data.get('title')
-            post.url = slugify(post.title)
+            post.url = slugify(unidecode.unidecode(post.title))
             post.description = form.cleaned_data.get('description')
             post.image = form.cleaned_data.get('image')
             tags = form.cleaned_data.get('tag')
