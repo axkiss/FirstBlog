@@ -19,7 +19,7 @@ from users.utils import crop_img_to_square
 
 
 class Post(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=100)
     url = models.SlugField(default='', null=False, db_index=True, max_length=80)
     description = RichTextUploadingField()
     image = models.ImageField(upload_to='post/%Y/%m/%d/',
@@ -125,6 +125,7 @@ class Post(models.Model):
         if Post.objects.filter(Q(url=self.url) & ~Q(id=self.id)).exists():
             msec = str(timezone.now().microsecond)
             self.url = self.url[:73] + '-' + msec
+        self.url = self.url[:80]
 
         # create thumbnail from post image
         self.create_thumbnail(100)
