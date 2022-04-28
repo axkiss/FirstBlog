@@ -9,6 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.views import View
 from django.contrib.auth.tokens import default_token_generator as token_generator
 
+from blog_proj.settings import MAIN_EMAIL
 from .forms import MyAuthenticationForm, MyUserCreationForm, MyPasswordResetForm, MySetPasswordForm, EditUserForm, \
     EditExtraUserProfileForm
 from .models import User, ExtraUserProfile
@@ -38,7 +39,7 @@ class RegisterView(View):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
-            send_email_for_verify(request, user)
+            send_email_for_verify(request, user, MAIN_EMAIL)
             return redirect('users:email_confirm')
         context = {
             'form': form

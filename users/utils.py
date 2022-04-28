@@ -7,7 +7,7 @@ from django.contrib.auth.tokens import default_token_generator as token_generato
 from PIL import Image
 
 
-def send_email_for_verify(request, user):
+def send_email_for_verify(request, user, sender):
     '''
     Sending email with link for verify user email address
     :param request:
@@ -30,7 +30,8 @@ def send_email_for_verify(request, user):
     message = render_to_string(email_template_name, context=context)
     email = EmailMessage(f'Verify email - {site_name}',
                          message,
-                         to=[user.email]
+                         to=[user.email],
+                         from_email=sender,
                          )
     email.send()
 
