@@ -1,12 +1,15 @@
 import os
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
 from .models import Post
 
 
 @receiver(pre_save, sender=Post)
 def delete_old_image_and_thumbnail(sender, instance, **kwargs):
+    """
+    Deleting old image, thumbnail if image of post was change
+    """
     if not instance.id:
         return False
 
@@ -23,3 +26,16 @@ def delete_old_image_and_thumbnail(sender, instance, **kwargs):
             os.remove(old_image.path)
         if os.path.isfile(old_thumbnail.path):
             os.remove(old_thumbnail.path)
+
+
+@receiver(pre_delete, sender=Post)
+def delete_image_and_thumbnail(sender, instance, **kwargs):
+    """
+    Deleting image, thumbnail with the post on the blog
+    """
+    image = instance.image
+    thumbnail = instance.thumbnail
+    if os.path.isfile(image.path):
+        os.remove(image.path)
+    if os.path.isfile(thumbnail.path):
+        os.remove(thumbnail.path)
