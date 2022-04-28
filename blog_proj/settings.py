@@ -37,8 +37,16 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_USE_TLS = True
+    EMAIL_PORT = 587
+    EMAIL_HOST_USER = os.getenv('MAIN_EMAIL')
+    EMAIL_HOST_PASSWORD = os.getenv('GMAIL_HOST_PASSWORD')
 # Application definition
-EMAIL_FEEDBACK = 'axkiss@ya.ru'
+EMAIL_FEEDBACK = os.getenv('MAIN_EMAIL')
+MAIN_EMAIL = os.getenv('MAIN_EMAIL')
 
 INSTALLED_APPS = [
     'django.contrib.admin',
