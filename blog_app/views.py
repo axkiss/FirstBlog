@@ -123,12 +123,11 @@ class EditPostView(View):
 
     def post(self, request, slug):
         post = get_object_or_404(Post, url=slug)
+        old_title = post.title
         form = AddPostForm(request.POST, request.FILES, instance=post)
         if form.is_valid() and request.user.is_authenticated and request.user.has_perm_edit_post():
-            post.title = form.cleaned_data.get('title')
-            post.url = slugify(unidecode.unidecode(post.title))
-            post.description = form.cleaned_data.get('description')
-            post.image = form.cleaned_data.get('image')
+            if old_title != post.title:
+                post.url = slugify(unidecode.unidecode(post.title))
             tags = form.cleaned_data.get('tag')
             if list(post.tag.names()) != tags:
                 post.tag.clear()
