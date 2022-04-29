@@ -21,7 +21,7 @@
                         </div>
                     {% endfor %}
                 {% endif %}
-                <form action="{% url 'feedback' %}" method="post">
+                <form action="{% url 'blog:feedback' %}" method="post">
                     {% csrf_token %}
                     <div class="mb-3">
                         <div class="row">

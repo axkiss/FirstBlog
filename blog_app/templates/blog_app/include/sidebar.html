@@ -10,7 +10,7 @@
             <p class="pt-2 text-center">
                 {% list_tags pos='aside' cnt_head_tag=3 cnt_side_tag=10 as aside_tags %}
                 {% for aside_tag in aside_tags %}
-                    <a href="{% url 'tag' aside_tag.slug %}" class="text-decoration-none">
+                    <a href="{% url 'blog:tag' aside_tag.slug %}" class="text-decoration-none">
                         <button type="button" class="btn btn-sm btn-outline-light position-relative m-2">{{ aside_tag }}
                             <span
                                     class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">{{ aside_tag.num_times }}</span>

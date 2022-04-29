@@ -3,8 +3,8 @@
 
     <div class="container">
 
-        <a class="navbar-brand fs-4 text-light" href="{% url 'index' %}"><B>FIRST<span
-                class="brand-color">BLOG</span></B></a>
+        <a class="navbar-brand fs-4 text-light" href="{% url 'blog:index' %}"><b>FIRST<span
+                class="brand-color">BLOG</span></b></a>
 
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02"
                 aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,15 +15,15 @@
                 {% list_tags pos='head' cnt_head_tag=3 cnt_side_tag=3 as header_tags %}
                 {% for header_tag in header_tags %}
                     <li class="nav-item">
-                    <a class="base-link" href="{% url 'tag' header_tag.slug %}">{{ header_tag|upper }}</a>
+                    <a class="base-link" href="{% url 'blog:tag' header_tag.slug %}">{{ header_tag|upper }}</a>
                 </li>
                 {% endfor %}
 
                 <li class="nav-item">
-                    <a class="base-link" href="{% url 'search' %}">ПОИСК</a>
+                    <a class="base-link" href="{% url 'blog:search' %}">ПОИСК</a>
                 </li>
                 <li class="nav-item">
-                    <a class="base-link" href="{% url 'about' %}">О БЛОГЕ</a>
+                    <a class="base-link" href="{% url 'blog:about' %}">О БЛОГЕ</a>
                 </li>
 
             </ul>
@@ -51,11 +51,11 @@
                             <li><span class="dropdown-header fw-bold">Hi, {{ user.get_short_name }}!</span></li>
                             {% if user.is_staff %}
                                 <li>
-                                    <a class="dropdown-item" href="{% url 'index' %}admin/">Admin panel</a>
+                                    <a class="dropdown-item" href="{% url 'blog:index' %}admin/">Admin panel</a>
                                 </li>
                             {% endif %}
                             {% if user.has_perm_add_post %}
-                                <li><a class="dropdown-item" href="{% url 'add_post' %}">Add Post</a></li>
+                                <li><a class="dropdown-item" href="{% url 'blog:add_post' %}">Add Post</a></li>
                             {% endif %}
                             <li><a class="dropdown-item" href="{% url 'users:profile' username=user.get_username %}">Profile</a></li>
                             <li>

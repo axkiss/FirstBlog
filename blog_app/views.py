@@ -85,7 +85,7 @@ class AddPostView(View):
                 'form': form
             }
             return render(request, template_name=self.template_name, context=context)
-        return redirect('index')
+        return redirect('blog:index')
 
     def post(self, request):
         form = AddPostForm(request.POST, request.FILES)
@@ -119,7 +119,7 @@ class EditPostView(View):
                 'form': form
             }
             return render(request, template_name=self.template_name, context=context)
-        return redirect('post_detail', slug=slug)
+        return redirect('blog:post_detail', slug=slug)
 
     def post(self, request, slug):
         post = get_object_or_404(Post, url=slug)
@@ -221,7 +221,7 @@ class FeedBackView(View):
                 send_feedback(request, form.cleaned_data, EMAIL_FEEDBACK)
             except BadHeaderError:
                 return HttpResponse('Invalid header found.')
-            return redirect('feedback_success')
+            return redirect('blog:feedback_success')
 
         context = {
             'form': form

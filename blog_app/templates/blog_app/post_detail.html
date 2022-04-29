@@ -12,7 +12,7 @@
                 <h1>
                     <b>{{ post.title }}</b>
                     {% if user.has_perm_edit_post %}
-                    <a href="{% url 'edit_post' slug=post.url %}"><button class="btn btn-sm btn-outline-primary">EDIT</button></a>
+                    <a href="{% url 'blog:edit_post' slug=post.url %}"><button class="btn btn-sm btn-outline-primary">EDIT</button></a>
                     {% endif %}
                 </h1>
             </div>
@@ -28,7 +28,7 @@
                 <!--Tags of news-->
                 <div>
                     {% for tag in post.tag.all %}
-                        <a href="{% url 'tag' tag.slug %}" class="text-decoration-none">
+                        <a href="{% url 'blog:tag' tag.slug %}" class="text-decoration-none">
                             <button type="button"
                                     class="btn btn-sm btn-outline-light ms-1">{{ tag }}</button>
                         </a>

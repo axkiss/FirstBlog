@@ -18,7 +18,7 @@
                             <!--Tags of news-->
                             <p class="card-text">
                                 {% for tag in post.tag.all %}
-                                    <a href="{% url 'tag' tag.slug %}" class="text-decoration-none">
+                                    <a href="{% url 'blog:tag' tag.slug %}" class="text-decoration-none">
                                         <button type="button"
                                                 class="btn btn-sm btn-outline-light me-1">{{ tag }}</button>
                                     </a>

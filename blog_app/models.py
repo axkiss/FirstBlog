@@ -37,7 +37,7 @@ class Post(models.Model):
         return self.title
 
     def get_url(self):
-        return reverse('post_detail', args=[self.url])
+        return reverse('blog:post_detail', args=[self.url])
 
     def add_one_view(self):
         Post.objects.filter(id=self.id).update(views=F('views') + 1)

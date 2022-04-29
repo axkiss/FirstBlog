@@ -14,7 +14,7 @@
                         <div class="card-news-img-overlay">
                             <p class="card-text mt-3">
                                 {% for tag in last_post.tag.all %}
-                                    <a href="{% url 'tag' tag.slug %}" class="text-decoration-none">
+                                    <a href="{% url 'blog:tag' tag.slug %}" class="text-decoration-none">
                                         <button type="button"
                                                 class="btn btn-sm btn-outline-light me-1">{{ tag }}</button>
                                     </a>
@@ -47,7 +47,7 @@
                             <!--Tags of news-->
                             <p class="card-text">
                                 {% for tag in post.tag.all %}
-                                    <a href="{% url 'tag' tag.slug %}" class="text-decoration-none">
+                                    <a href="{% url 'blog:tag' tag.slug %}" class="text-decoration-none">
                                         <button type="button"
                                                 class="btn btn-sm btn-outline-light me-1">{{ tag }}</button>
                                     </a>
