@@ -1,10 +1,46 @@
 from django.contrib import admin
-from .models import Post
+from .models import Post, Comment, SeoData
 
 
+@admin.register(SeoData)
+class SeoDataAdmin(admin.ModelAdmin):
+    list_display = ('site_name', 'title')
+
+
+class AuthorFilter(admin.SimpleListFilter):
+    """
+    Filter show only the authors who wrote the post
+    """
+    title = 'Authors'
+    parameter_name = 'author'
+
+    def lookups(self, request, model_admin):
+        authors = Post.objects.all().values('author_id', 'author__username').distinct()
+        return [tuple(author.values()) for author in authors]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(author__id=self.value())
+        return queryset
+
+
+@admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('title', 'created_at')
+    exclude = ('views',)
+    list_display = ('title', 'author', 'post_tags', 'views', 'created_at', 'edited_at',)
+    list_per_page = 25
+    list_filter = (AuthorFilter, 'tag',)
+    ordering = ('created_at', 'edited_at', 'views')
+    search_fields = ('title',)
     prepopulated_fields = {'url': ('title',)}
 
+    @admin.display(description='TAGS')
+    def post_tags(self, obj):
+        return list(obj.tag.names())
 
-admin.site.register(Post, PostAdmin)
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'username', 'created_at')
+    list_per_page = 25
+    search_fields = ('text',)
