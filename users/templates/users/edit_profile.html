@@ -1,6 +1,7 @@
 {% extends 'blog_app/base.html' %}
 
-{% block title %}Register - FIRSTBLOG{% endblock %}
+{% block title %}Profile - {{ user.get_username }}{% endblock %}
+{% block meta_description %}{% endblock %}
 
 {% block content %}
     <div class="col-xxl-5 col-xl-6 col-lg-7 col-md-9 mb-5">

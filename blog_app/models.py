@@ -2,7 +2,7 @@ import os
 import re
 from io import BytesIO
 from PIL import Image
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.core.files.base import ContentFile
 from django.core.validators import FileExtensionValidator
 from django.db import models
@@ -17,6 +17,22 @@ from taggit.managers import TaggableManager
 
 from users.utils import crop_img_to_square
 from users.validators import ImageSizeValidator
+
+
+class SeoData(models.Model):
+    site_name = models.CharField(max_length=80)
+    favicon = models.ImageField(validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'ico']),
+                                            ImageSizeValidator(min_size=(16, 16), max_size=(144, 144))])
+    title = models.CharField(max_length=80)
+    description = models.CharField(max_length=140)
+
+    def __str__(self):
+        return self.title
+
+    def clean(self):
+        # Only 1 record
+        if SeoData.objects.count() > 0 and self.id != SeoData.objects.get().id:
+            raise ValidationError('You can not add new records, you can only change the existing.')
 
 
 class Post(models.Model):
