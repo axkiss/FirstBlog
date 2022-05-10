@@ -21,6 +21,7 @@ from users.validators import ImageSizeValidator
 
 class SeoData(models.Model):
     site_name = models.CharField(max_length=80)
+    domain = models.CharField(max_length=80, help_text='For example: test.com')
     favicon = models.ImageField(validators=[FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'ico']),
                                             ImageSizeValidator(min_size=(16, 16), max_size=(144, 144))])
     title = models.CharField(max_length=80)

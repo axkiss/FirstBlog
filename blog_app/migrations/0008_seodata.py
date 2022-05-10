@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('site_name', models.CharField(max_length=80)),
+                ('domain', models.CharField(max_length=80, help_text='For example: test.com')),
                 ('favicon', models.ImageField(upload_to='', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png', 'ico']), users.validators.ImageSizeValidator(max_size=(144, 144), min_size=(16, 16))])),
                 ('title', models.CharField(max_length=80)),
                 ('description', models.CharField(max_length=140)),
