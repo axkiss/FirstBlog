@@ -9,6 +9,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.views import View
 from django.contrib.auth.tokens import default_token_generator as token_generator
 
+from blog_app.models import SeoData
 from blog_proj.settings import MAIN_EMAIL
 from .forms import MyAuthenticationForm, MyUserCreationForm, MyPasswordResetForm, MySetPasswordForm, EditUserForm, \
     EditExtraUserProfileForm
@@ -91,6 +92,10 @@ class EmailConfirmInvalidView(View):
 
 class MyPasswordResetView(PasswordResetView):
     email_template_name = 'users/password_reset_email.html'
+    seo_data = SeoData.objects.first()
+    extra_email_context = {'domain': seo_data.domain,
+                           'site_name': seo_data.site_name,
+                           }
     template_name = 'users/password_reset_form.html'
     form_class = MyPasswordResetForm
     success_url = reverse_lazy('users:password_reset_done')

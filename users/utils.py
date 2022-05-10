@@ -6,18 +6,21 @@ from django.utils.http import urlsafe_base64_encode
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from PIL import Image
 
+from django.apps import apps
 
-def send_email_for_verify(request, user, sender):
-    '''
+
+def send_email_for_verify(request, user):
+    """
     Sending email with link for verify user email address
     :param request:
     :param user:
     :return:
-    '''
+    """
     email_template_name = 'users/email_confirm_email.html',
-    current_site = get_current_site(request)
-    site_name = current_site.name
-    domain = current_site.domain
+    SeoData = apps.get_model('blog_app', 'SeoData')
+    seo_data = SeoData.objects.first()
+    site_name = seo_data.site_name
+    domain = seo_data.domain
     context = {
         'domain': domain,
         'site_name': site_name,
@@ -31,7 +34,6 @@ def send_email_for_verify(request, user, sender):
     email = EmailMessage(f'Verify email - {site_name}',
                          message,
                          to=[user.email],
-                         from_email=sender,
                          )
     email.send()
 

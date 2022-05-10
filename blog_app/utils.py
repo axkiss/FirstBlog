@@ -1,6 +1,7 @@
-from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
+
+from blog_app.models import SeoData
 
 
 def send_feedback(request, data, email_feedback):
@@ -12,9 +13,9 @@ def send_feedback(request, data, email_feedback):
     :return:
     """
     email_template_name = 'blog_app/feedback_email.html',
-    current_site = get_current_site(request)
-    site_name = current_site.name
-    domain = current_site.domain
+    seo_data = SeoData.objects.first()
+    site_name = seo_data.site_name
+    domain = seo_data.domain
     name = data['name']
     email_from = data['email']
     subject = data['subject']
