@@ -19,8 +19,13 @@ def send_email_for_verify(request, user):
     email_template_name = 'users/email_confirm_email.html',
     SeoData = apps.get_model('blog_app', 'SeoData')
     seo_data = SeoData.objects.first()
-    site_name = seo_data.site_name
-    domain = seo_data.domain
+    if seo_data:
+        site_name = seo_data.site_name
+        domain = seo_data.domain
+    else:
+        current_site = get_current_site(request)
+        site_name = current_site.name
+        domain = current_site.domain
     context = {
         'domain': domain,
         'site_name': site_name,

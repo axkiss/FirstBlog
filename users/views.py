@@ -10,7 +10,6 @@ from django.views import View
 from django.contrib.auth.tokens import default_token_generator as token_generator
 
 from blog_app.models import SeoData
-from blog_proj.settings import MAIN_EMAIL
 from .forms import MyAuthenticationForm, MyUserCreationForm, MyPasswordResetForm, MySetPasswordForm, EditUserForm, \
     EditExtraUserProfileForm
 from .models import User, ExtraUserProfile
@@ -40,7 +39,7 @@ class RegisterView(View):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=password)
-            send_email_for_verify(request, user, MAIN_EMAIL)
+            send_email_for_verify(request, user)
             return redirect('users:email_confirm')
         context = {
             'form': form
@@ -93,9 +92,7 @@ class EmailConfirmInvalidView(View):
 class MyPasswordResetView(PasswordResetView):
     email_template_name = 'users/password_reset_email.html'
     seo_data = SeoData.objects.first()
-    extra_email_context = {'domain': seo_data.domain,
-                           'site_name': seo_data.site_name,
-                           }
+    extra_email_context = {'domain': seo_data.domain, 'site_name': seo_data.site_name} if seo_data else {}
     template_name = 'users/password_reset_form.html'
     form_class = MyPasswordResetForm
     success_url = reverse_lazy('users:password_reset_done')
