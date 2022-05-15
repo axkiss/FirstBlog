@@ -10,7 +10,7 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card-news bg-dark crop-img">
-                        <img src="{{ last_post.image.url }}" class="card-img" alt="{{ last_post.title }}">
+                        <a href="{{ last_post.get_url }}"><img src="{{ last_post.image.url }}" class="card-img" alt="{{ last_post.title }}"></a>
                         <div class="shadow"></div>
                         <div class="card-news-img-overlay">
                             <p class="card-text mt-3">
@@ -21,7 +21,7 @@
                                     </a>
                                 {% endfor %}
                             </p>
-                            <h2 class="card-title"><a class="base-link"
+                            <h2 class="card-title"><a class="base-link disabled"
                                                       href="{{ last_post.get_url }}">{{ last_post.title }}</a></h2>
 
                             <p class="card-text">{{ last_post.created_at }}</p>
