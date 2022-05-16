@@ -77,7 +77,7 @@ class Post(models.Model):
                 clean_desc = strip_tags(post.description)
 
                 # Truncate description of posts
-                begin = clean_desc.find(search_query)
+                begin = clean_desc.lower().find(search_query.lower())
                 end = begin + len(search_query)
                 if begin - len_desc_post // 2 > 0:
                     if len(clean_desc) - end < len_desc_post // 2:
