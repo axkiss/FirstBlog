@@ -1,6 +1,8 @@
 # FirstBlog
 Simple blog with basic functions on Django and Bootstrap.
 
+**[View Live Preview](https://fblog.axkiss.ru)**
+
 ### Features
 - Post (add, edit, delete);
 - Tags;
