@@ -8,27 +8,30 @@
     <section class="last-news mb-4">
         <div class="container">
             <div class="row">
-                <div class="col-12">
-                    <div class="card-news bg-dark crop-img">
-                        <a href="{{ last_post.get_url }}"><img src="{{ last_post.image.url }}" class="card-img" alt="{{ last_post.title }}"></a>
-                        <div class="shadow"></div>
-                        <div class="card-news-img-overlay">
-                            <p class="card-text mt-3">
-                                {% for tag in last_post.tag.all %}
-                                    <a href="{% url 'blog:tag' tag.slug %}" class="text-decoration-none">
-                                        <button type="button"
-                                                class="btn btn-sm btn-outline-light me-1">{{ tag }}</button>
-                                    </a>
-                                {% endfor %}
-                            </p>
-                            <h2 class="card-title"><a class="base-link disabled"
-                                                      href="{{ last_post.get_url }}">{{ last_post.title }}</a></h2>
+                {% for post in posts|slice:"0:1" %}
+                    <div class="col-12">
+                        <div class="card-news bg-dark crop-img">
+                            <a href="{{ post.get_absolute_url }}"><img src="{{ post.image.url }}" class="card-img"
+                                                              alt="{{ post.title }}"></a>
+                            <div class="shadow"></div>
+                            <div class="card-news-img-overlay">
+                                <p class="card-text mt-3">
+                                    {% for tag in post.tag.all %}
+                                        <a href="{% url 'blog:tag' tag.slug %}" class="text-decoration-none">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-light me-1">{{ tag }}</button>
+                                        </a>
+                                    {% endfor %}
+                                </p>
+                                <h2 class="card-title"><a class="base-link disabled"
+                                                          href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
 
-                            <p class="card-text">{{ last_post.created_at }}</p>
+                                <p class="card-text">{{ post.created_at }}</p>
+                            </div>
                         </div>
                     </div>
-                    {% if last_post is None %}<h2 class="text-center">Nothing. You need to add posts.</h2>{% endif %}
-                </div>
+                {% endfor %}
+                {% if posts|length == 0 %}<h2 class="text-center">Nothing. You need to add posts.</h2>{% endif %}
             </div>
         </div>
     </section>
@@ -38,11 +41,11 @@
     <!--List of news-->
     <div class="col-lg-9 mb-5">
         <div class="row row-cols-1 row-cols-md-2 g-4">
-            {% for post in posts %}
+            {% for post in posts|slice:"1:" %}
                 <div class="col">
                     <div class="card-news bg-dark">
                         <!--Img of news-->
-                        <a href="{{ post.get_url }}"><img src="{{ post.image.url }}"
+                        <a href="{{ post.get_absolute_url }}"><img src="{{ post.image.url }}"
                                                           class="card-img-top" alt="{{ post.title }}"></a>
                         <div class="mt-3">
                             <!--Tags of news-->
@@ -55,7 +58,7 @@
                                 {% endfor %}
                             </p>
                             <!--Title and time of news-->
-                            <h2 class="card-title"><a class="base-link" href="{{ post.get_url }}">{{ post.title }}</a>
+                            <h2 class="card-title"><a class="base-link" href="{{ post.get_absolute_url }}">{{ post.title }}</a>
                             </h2>
                             <p class="card-text">{{ post.created_at }}</p>
                         </div>
@@ -63,7 +66,7 @@
                 </div>
             {% endfor %}
         </div>
-        {% include './include/pagination.html' with page_obj=posts %}
+        {% include './include/pagination.html' with page_obj=page_obj %}
     </div>
     {% include './include/sidebar.html' %}
 {% endblock %}

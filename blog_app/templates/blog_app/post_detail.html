@@ -14,7 +14,9 @@
                 <h1>
                     <b>{{ post.title }}</b>
                     {% if user.has_perm_edit_post %}
-                    <a href="{% url 'blog:edit_post' slug=post.url %}"><button class="btn btn-sm btn-outline-primary">EDIT</button></a>
+                        <a href="{{ post.get_absolute_url }}/edit/">
+                            <button class="btn btn-sm btn-outline-primary">EDIT</button>
+                        </a>
                     {% endif %}
                 </h1>
             </div>
@@ -42,7 +44,7 @@
             <div class="news-text mb-3 border-3 border-bottom border-secondary">
                 {{ post.description|safe }}
                 {% if edited %}
-                <div class="text-end fst-italic fw-light fs-6 text-muted">edited at {{ post.edited_at }}</div>
+                    <div class="text-end fst-italic fw-light fs-6 text-muted">edited at {{ post.edited_at }}</div>
                 {% endif %}
             </div>
             <!--News share block-->

@@ -28,7 +28,7 @@
         <div class="list-group">
             {% popular_posts days=7 cnt_posts=5 as aside_posts %}
             {% for aside_post in aside_posts %}
-                <a href="{{ aside_post.get_url }}" class="list-group-item bg-transparent base-link">
+                <a href="{{ aside_post.get_absolute_url }}" class="list-group-item bg-transparent base-link">
                     <div class="d-flex w-100 justify-content-between align-items-center">
                         <h6 class="mb-0 me-1">{{ aside_post.title|truncatechars:70 }}</h6>
                         <img src="{{ aside_post.thumbnail.url }}" width="64"

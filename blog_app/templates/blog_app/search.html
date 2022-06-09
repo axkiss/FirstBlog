@@ -14,13 +14,13 @@
             <!--Text of news-->
             <form class="d-flex my-4" method="get">
                 <input class="form-control form-control-lg me-2" type="text" placeholder="Search" aria-label="Search"
-                       name="q" value="{{ request.GET.q }}" minlength="4">
+                       name="q" value="{{ request.GET.q}}" minlength="4">
                 <button class="btn btn-lg btn-outline-primary" type="submit">Search</button>
             </form>
 
             <div class="news-text mb-3">
-                {% if count_results %}
-                    <div class="fs-4 fw-bold my-3">Results: {{ count_results }}</div>
+                {% if paginator.count %}
+                    <div class="fs-4 fw-bold my-3">Results: {{ paginator.count }}</div>
                 {% endif %}
                 <div class="list-group">
                     {% for post in result_posts %}
@@ -36,17 +36,18 @@
 
                         </a>
                     {% endfor %}
-                    {% if not_found %}
+                    {% if not result_posts and request.GET.q and request.GET.q|cut:" "%}
                         <div class="my-3 mx-auto">Nothing found on query <span
                                 class="fw-bold">"{{ request.GET.q }}"</span>.
                         </div>
                     {% endif %}
+
                 </div>
             </div>
 
 
         </div>
-{% include './include/pagination.html' with page_obj=result_posts %}
+{% include './include/pagination.html' with page_obj=page_obj %}
     </div>
 
 
