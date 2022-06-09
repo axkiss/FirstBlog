@@ -1,63 +1,47 @@
 import datetime
-import unidecode
-from django.core.paginator import Paginator
-from django.http import HttpResponse
+
+from django.urls import reverse_lazy
+from unidecode import unidecode
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
+from django.views.generic import TemplateView, ListView, FormView, CreateView, UpdateView
 from django.template.defaultfilters import slugify
-from django.core.mail import BadHeaderError
-from django.views.generic import TemplateView
 
 from blog_proj.settings import EMAIL_FEEDBACK
 from .forms import AddPostForm, AddCommentForm, FeedBackForm
 from .models import Post, Comment
+from .services import get_results_search, get_paginate_queryset
+from .utils import send_feedback
 from taggit.models import Tag
 
-from .utils import send_feedback
 
-
-class MainView(View):
+class MainListView(ListView):
+    """List of posts for the main page"""
     template_name = 'blog_app/home.html'
-    posts_on_page = 10
-
-    def get(self, request, *args, **kwargs):
-        posts = Post.objects.order_by('-id')
-        if len(posts) != 0:
-            last_post = posts[0]
-        else:
-            last_post = None
-
-        # Make pagination
-        paginator = Paginator(posts[1:], self.posts_on_page)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        context = {
-            'last_post': last_post,
-            'posts': page_obj
-        }
-        return render(request, self.template_name, context=context)
+    model = Post
+    paginate_by = 20
+    context_object_name = 'posts'
 
 
 class PostDetailView(View):
+    """Show detail of post and comments"""
     template_name = 'blog_app/post_detail.html'
-    comments_on_page = 20
+    paginate_by = 20
 
     def get(self, request, slug, *args, **kwargs):
-        post = get_object_or_404(Post, url=slug)
+        post = get_object_or_404(Post, slug=slug)
         post.add_one_view()
         edited = (post.edited_at - post.created_at) > datetime.timedelta(minutes=1)
-        comment_form = AddCommentForm()
         comments = post.comments.all()
 
-        # Make pagination
-        paginator = Paginator(comments, self.comments_on_page)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
+        # Make pagination for comments
+        page_obj = get_paginate_queryset(request, comments, self.paginate_by)
 
         context = {
             'post': post,
             'edited': edited,
-            'comment_form': comment_form,
+            'comment_form': AddCommentForm(),
             'comments': page_obj,
             'count_comments': len(comments),
         }
@@ -66,175 +50,117 @@ class PostDetailView(View):
     def post(self, request, slug, *args, **kwargs):
         form = AddCommentForm(request.POST)
         if form.is_valid():
-            post = get_object_or_404(Post, url=slug)
+            post = get_object_or_404(Post, slug=slug)
             text = form.cleaned_data.get('text')
             new_comment = Comment(post=post, username=request.user, text=text)
             new_comment.save()
         return redirect(request.META.get('HTTP_REFERER', '/') + '#comments')
 
 
-class AddPostView(View):
+class AddPostView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    """Show form for adding a new post on blog"""
+    login_url = reverse_lazy('users:login')
+    permission_required = 'blog_app.add_post'
     template_name = 'blog_app/add_post.html'
-    title = 'Add post'
+    model = Post
+    form_class = AddPostForm
 
-    def get(self, request):
-        if request.user.is_authenticated and request.user.has_perm_add_post():
-            form = AddPostForm()
-            context = {
-                'title': self.title,
-                'form': form
-            }
-            return render(request, template_name=self.template_name, context=context)
-        return redirect('blog:index')
+    def form_valid(self, form):
+        form.instance.slug = slugify(unidecode(form.cleaned_data['title']))
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
-    def post(self, request):
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid() and request.user.is_authenticated and request.user.has_perm_add_post():
-            title = form.cleaned_data.get('title')
-            url = slugify(title)
-            description = form.cleaned_data.get('description')
-            image = form.cleaned_data.get('image')
-            tags = form.cleaned_data.get('tag')
-            new_post = Post(title=title, url=url, description=description, image=image, author=request.user)
-            new_post.save()
-            new_post.tag.add(*tags)
-            return redirect(new_post.get_url())
-        context = {
-            'title': self.title,
-            'form': form
-        }
-        return render(request, template_name=self.template_name, context=context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Add post'
+        return context
 
 
-class EditPostView(View):
+class EditPostView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    """Show form for editing a post on blog"""
+    login_url = reverse_lazy('users:login')
+    permission_required = 'blog_app.change_post'
     template_name = 'blog_app/add_post.html'
-    title = 'Edit post'
+    model = Post
+    form_class = AddPostForm
 
-    def get(self, request, slug):
-        if request.user.is_authenticated and request.user.has_perm_edit_post():
-            post = get_object_or_404(Post, url=slug)
-            form = AddPostForm(instance=post)
-            context = {
-                'title': self.title,
-                'form': form
-            }
-            return render(request, template_name=self.template_name, context=context)
-        return redirect('blog:post_detail', slug=slug)
+    def form_valid(self, form):
+        form.instance.slug = slugify(unidecode(form.cleaned_data['title']))
+        return super().form_valid(form)
 
-    def post(self, request, slug):
-        post = get_object_or_404(Post, url=slug)
-        old_title = post.title
-        form = AddPostForm(request.POST, request.FILES, instance=post)
-        if form.is_valid() and request.user.is_authenticated and request.user.has_perm_edit_post():
-            if old_title != post.title:
-                post.url = slugify(unidecode.unidecode(post.title))
-            tags = form.cleaned_data.get('tag')
-            if list(post.tag.names()) != tags:
-                post.tag.clear()
-                post.tag.add(*tags)
-            post.save()
-            return redirect(post.get_url())
-        context = {
-            'title': self.title,
-            'form': form
-        }
-        return render(request, template_name=self.template_name, context=context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edit post'
+        return context
 
 
-class SearchView(View):
+class SearchListView(ListView):
+    """List of posts including a search query"""
     template_name = 'blog_app/search.html'
-    posts_on_page = 10
+    model = Post
+    paginate_by = 10
+    context_object_name = 'result_posts'
 
-    def get(self, request):
-        search_query = request.GET.get('q')
-        result_posts = ''
-        not_found = False
-
-        # When the page is open for the first time, the search query is empty
-        if search_query:
-            # Find search query in database of posts
-            result_posts = Post.get_results_search(search_query, posts_on_page=self.posts_on_page)
-            if not result_posts:
-                not_found = True
-
-        # Make pagination
-        paginator = Paginator(result_posts, self.posts_on_page)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        context = {
-            'result_posts': page_obj,
-            'count_results': paginator.count,
-            'not_found': not_found,
-        }
-        return render(request, template_name=self.template_name, context=context)
+    def get_queryset(self):
+        search_query = self.request.GET.get('q')
+        return get_results_search(self.model, search_query, posts_on_page=self.paginate_by)
 
 
-class TagView(View):
+class TagListView(ListView):
+    """List of posts including tag"""
     template_name = 'blog_app/tag.html'
-    posts_on_page = 10
+    model = Post
+    context_object_name = 'posts'
+    paginate_by = 10
 
-    def get(self, request, slug, *args, **kwargs):
+    def get_queryset(self):
+        slug = self.kwargs['slug']
         tag = get_object_or_404(Tag, slug=slug)
         posts = Post.objects.filter(tag=tag).order_by('-id')
+        return posts
 
-        # Make pagination
-        paginator = Paginator(posts, self.posts_on_page)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        context = {
-            'title_tag': tag,
-            'posts': page_obj
-        }
-        return render(request, template_name=self.template_name, context=context)
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(TagListView, self).get_context_data(**kwargs)
+        context['title_tag'] = self.kwargs['slug']
+        return context
 
 
-class AboutUsView(TemplateView):
-    template_name = 'blog_app/about.html'
-
-
-class FeedBackView(View):
+class FeedBackFormView(FormView):
+    """Sending feedback from the blog to EMAIL_FEEDBACK"""
     template_name = 'blog_app/feedback.html'
+    form_class = FeedBackForm
+    success_url = reverse_lazy('blog:feedback_success')
 
-    def get(self, request):
-        if request.user.is_authenticated:
-            form = FeedBackForm(
-                initial={
-                    'name': request.user.get_full_name(),
-                    'email': request.user.email
-                })
-        else:
-            form = FeedBackForm()
+    def get_initial(self):
+        if self.request.user.is_authenticated:
+            return {'name': self.request.user.get_full_name(),
+                    'email': self.request.user.email}
 
-        context = {
-            'form': form
-        }
-        return render(request, template_name=self.template_name, context=context)
-
-    def post(self, request):
-        form = FeedBackForm(request.POST)
-
-        if form.is_valid():
-            try:
-                send_feedback(request, form.cleaned_data, EMAIL_FEEDBACK)
-            except BadHeaderError:
-                return HttpResponse('Invalid header found.')
-            return redirect('blog:feedback_success')
-
-        context = {
-            'form': form
-        }
-        return render(request, template_name=self.template_name, context=context)
+    def form_valid(self, form):
+        send_feedback(self.request, form.cleaned_data, EMAIL_FEEDBACK)
+        return super(FeedBackFormView, self).form_valid(form)
 
 
-class FeedBackSuccsesView(TemplateView):
+class FeedBackSuccessView(TemplateView):
+    """Show the message after sending feedback"""
     template_name = 'blog_app/feedback_success.html'
 
 
+class AboutUsView(TemplateView):
+    """Show description of the blog """
+    template_name = 'blog_app/about.html'
+
+
 class TermsConditionsView(TemplateView):
+    """Show the terms and conditions of the blog"""
     template_name = 'blog_app/terms_and_conditions.html'
 
 
+def custom_page_http_forbidden_view(request, exception):
+    """Show 403 page"""
+    return render(request, "blog_app/errors/403.html", {})
+
+
 def custom_page_not_found_view(request, exception):
+    """Show 404 page"""
     return render(request, "blog_app/errors/404.html", {})
