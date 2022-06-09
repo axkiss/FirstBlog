@@ -1,0 +1,17 @@
+{% extends 'blog_app/base.html' %}
+
+{% block title %}404 Not Found - FIRSTBLOG{% endblock %}
+
+{% block content %}
+    <div class="col-xl-9 mb-5">
+        <div class="news-body fs-5 px-md-5">
+            <h1><b>403 Forbidden</b></h1>
+            <div class="news-text mb-3">
+                <p>You don't have permission to access on this page.</p>
+                <div class="text-center"><a href="{% url 'blog:index' %}">
+                    <button class="btn btn-outline-primary w-50">Main page</button>
+                </a></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

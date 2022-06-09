@@ -19,6 +19,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+handler403 = 'blog_app.views.custom_page_http_forbidden_view'
 handler404 = 'blog_app.views.custom_page_not_found_view'
 urlpatterns = [
     path('admin/', admin.site.urls),
