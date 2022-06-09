@@ -1,12 +1,11 @@
 from django import forms
-from ckeditor_uploader.fields import RichTextUploadingFormField
-from taggit.managers import TagField
 from taggit.forms import TagWidget
 
 from blog_app.models import Comment, Post
 
 
 class AddPostForm(forms.ModelForm):
+    """Form for create and update post"""
     class Meta:
         model = Post
         fields = ('title', 'description', 'image', 'tag')
@@ -26,6 +25,7 @@ class AddPostForm(forms.ModelForm):
 
 
 class AddCommentForm(forms.ModelForm):
+    """Form for create comment to post"""
     class Meta:
         model = Comment
         fields = ('text',)
@@ -34,12 +34,12 @@ class AddCommentForm(forms.ModelForm):
             'text': forms.Textarea(attrs={
                 'class': "form-control",
                 'rows': 3,
-
             }),
         }
 
 
 class FeedBackForm(forms.Form):
+    """Form for sending feedback from blog"""
     name = forms.CharField(
         max_length=100,
         widget=forms.TextInput(
