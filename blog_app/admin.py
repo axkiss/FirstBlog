@@ -32,7 +32,7 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = (AuthorFilter, 'tag',)
     ordering = ('created_at', 'edited_at', 'views')
     search_fields = ('title',)
-    prepopulated_fields = {'url': ('title',)}
+    prepopulated_fields = {'slug': ('title',)}
 
     @admin.display(description='TAGS')
     def post_tags(self, obj):

@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=100)),
-                ('url', models.SlugField(default='', max_length=80)),
+                ('slug', models.SlugField(default='', max_length=80)),
                 ('description', ckeditor_uploader.fields.RichTextUploadingField()),
                 ('image', models.ImageField(upload_to='post/%Y/%m/%d/')),
                 ('created_at', models.DateField(default=django.utils.timezone.now)),
