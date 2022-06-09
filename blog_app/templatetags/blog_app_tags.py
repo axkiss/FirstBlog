@@ -7,6 +7,7 @@ register = template.Library()
 
 @register.simple_tag(name='list_tags')
 def get_list_tags(pos, cnt_head_tag, cnt_side_tag):
+    """Show tags on 2 positions: header and aside"""
     list_tags = Post.tag.most_common()
     if pos == 'head':
         return list_tags[:cnt_head_tag]
@@ -16,6 +17,7 @@ def get_list_tags(pos, cnt_head_tag, cnt_side_tag):
 
 @register.simple_tag(name='popular_posts')
 def get_popular_posts(days, cnt_posts):
+    """Show popular post in n days"""
     # if blog hasn't publications
     if not Post.objects.last():
         return ''
