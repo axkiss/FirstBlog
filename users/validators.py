@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 @deconstructible()
 class ImageSizeValidator:
+    """Compare width and height of img with max and min allowed """
     messages = {
         'big': _('Your img %(img_width)s x %(img_height)s is too big. Max size %(max_width)s x %(max_height)s'),
         'small': _('Your img %(img_width)s x %(img_height)s is too small. Min size %(min_width)s x %(min_height)s'),
