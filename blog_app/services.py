@@ -2,15 +2,15 @@ import os
 import re
 from io import BytesIO
 from PIL import Image
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils import timezone
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.utils.html import strip_tags
-
-# from .models import Post
-from users.utils import crop_img_to_square
 from django.core.files.base import ContentFile
+
+from users.utils import crop_img_to_square
 
 
 def get_paginate_queryset(request, queryset, page_size):
