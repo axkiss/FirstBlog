@@ -2,13 +2,15 @@ from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.db.models import F
-from blog_app.services import create_thumbnail_for_post, get_unique_slug
-from users.models import User
 from django.urls import reverse
 from django.utils import timezone
+
 from ckeditor_uploader.fields import RichTextUploadingField
 from taggit.managers import TaggableManager
+
+from users.models import User
 from users.validators import ImageSizeValidator
+from .services import create_thumbnail_for_post, get_unique_slug
 
 
 class SeoData(models.Model):
@@ -58,10 +60,7 @@ class Post(models.Model):
         return None
 
     def save(self, *args, **kwargs):
-        # make unique slug of post
         self.slug = get_unique_slug(self, max_length=80)
-
-        # create thumbnail from post image
         create_thumbnail_for_post(self, height_side=100)
         super(Post, self).save(*args, **kwargs)
 
