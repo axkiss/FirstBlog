@@ -1,19 +1,20 @@
 import datetime
+from unidecode import unidecode
 
 from django.urls import reverse_lazy
-from unidecode import unidecode
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.views.generic import TemplateView, ListView, FormView, CreateView, UpdateView
 from django.template.defaultfilters import slugify
 
+from taggit.models import Tag
+
 from blog_proj.settings import EMAIL_FEEDBACK
 from .forms import AddPostForm, AddCommentForm, FeedBackForm
 from .models import Post, Comment
 from .services import get_results_search, get_paginate_queryset
 from .utils import send_feedback
-from taggit.models import Tag
 
 
 class MainListView(ListView):
