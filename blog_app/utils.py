@@ -2,7 +2,8 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage, BadHeaderError
 from django.contrib.sites.shortcuts import get_current_site
-from blog_app.models import SeoData
+
+from .models import SeoData
 
 
 def send_feedback(request, data, email_feedback):
