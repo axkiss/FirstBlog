@@ -57,7 +57,7 @@
                             {% if user.has_perm_add_post %}
                                 <li><a class="dropdown-item" href="{% url 'blog:add_post' %}">Add Post</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="{% url 'users:profile' username=user.get_username %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{{ user.get_absolute_url }}">Profile</a></li>
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
