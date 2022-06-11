@@ -1,8 +1,10 @@
+import os
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import pre_save, pre_delete
 from django.dispatch import receiver
-from users.models import ExtraUserProfile
-import os
+
+from .models import ExtraUserProfile
 
 
 @receiver(pre_save, sender=ExtraUserProfile)
