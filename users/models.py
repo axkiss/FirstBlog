@@ -1,11 +1,14 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from users.utils import make_square_img
-from users.validators import ImageSizeValidator
+
+from .utils import make_square_img
+from .validators import ImageSizeValidator
 
 
 class User(AbstractUser):
+    """Users on blog"""
     first_name = models.CharField(_('first name'), max_length=150)
     last_name = models.CharField(_('last name'), max_length=150)
     email = models.EmailField(_('email address'))
@@ -20,13 +23,18 @@ class User(AbstractUser):
     def get_group(self):
         return self.groups.all().first()
 
+    def get_absolute_url(self):
+        return reverse('users:profile', args=[self.username])
+
 
 def user_directory_path(instance, filename):
+    """Save the user avatar in the catalog with the name of the first letter"""
     first_letter = instance.user.username[0].lower()
     return f'avatars/{first_letter}/{filename}'
 
 
 class ExtraUserProfile(models.Model):
+    """Extra information of user profiles"""
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     avatar = models.ImageField(default=None, upload_to=user_directory_path,
                                validators=[ImageSizeValidator(min_size=(65, 65), max_size=(1500, 1500))], blank=True,
