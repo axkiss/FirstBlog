@@ -1,7 +1,7 @@
 from django import forms
 from taggit.forms import TagWidget
 
-from blog_app.models import Comment, Post
+from .models import Comment, Post
 
 
 class AddPostForm(forms.ModelForm):
@@ -29,7 +29,6 @@ class AddCommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('text',)
-
         widgets = {
             'text': forms.Textarea(attrs={
                 'class': "form-control",
