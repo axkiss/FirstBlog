@@ -1,16 +1,17 @@
+from django import forms
 from django.contrib.auth import get_user_model, password_validation, authenticate
 from django.contrib.auth.forms import AuthenticationForm, UsernameField, UserCreationForm, PasswordResetForm, \
     SetPasswordForm
-from django import forms
 from django.core.exceptions import ValidationError
 
-from users.models import ExtraUserProfile
-from users.utils import send_email_for_verify
+from .models import ExtraUserProfile
+from .utils import send_email_for_verify
 
 User = get_user_model()
 
 
 class MyUserCreationForm(UserCreationForm):
+    """Form for registration user"""
     first_name = forms.CharField(
         max_length=150,
         widget=forms.TextInput(attrs={
@@ -57,10 +58,11 @@ class MyUserCreationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ("first_name", "last_name", "username", "email")
+        fields = ("first_name", "last_name", "username", "email", "password1", "password2")
 
 
 class MyAuthenticationForm(AuthenticationForm):
+    """Form for login user"""
     username = UsernameField(
         widget=forms.TextInput(attrs={
             'autofocus': True,
@@ -87,7 +89,7 @@ class MyAuthenticationForm(AuthenticationForm):
                 raise self.get_invalid_login_error()
             else:
                 self.confirm_login_allowed(self.user_cache)
-                # check email verify
+                # check email verify and repeat send email
                 if not self.user_cache.email_verify and not self.user_cache.is_superuser:
                     send_email_for_verify(self.request, self.user_cache)
                     raise self.get_invalid_email_verify_error()
@@ -101,6 +103,7 @@ class MyAuthenticationForm(AuthenticationForm):
 
 
 class MyPasswordResetForm(PasswordResetForm):
+    """Form for get email to reset password"""
     email = forms.EmailField(
         max_length=254,
         widget=forms.EmailInput(attrs={
@@ -112,6 +115,7 @@ class MyPasswordResetForm(PasswordResetForm):
 
 
 class MySetPasswordForm(SetPasswordForm):
+    """Form for setting a new password"""
     new_password1 = forms.CharField(
         strip=False,
         min_length=8,
@@ -130,6 +134,7 @@ class MySetPasswordForm(SetPasswordForm):
 
 
 class EditUserForm(forms.ModelForm):
+    """Form for updating main information about the user profile"""
     class Meta:
         model = User
         fields = ('first_name', 'last_name', 'email')
@@ -144,6 +149,7 @@ class EditUserForm(forms.ModelForm):
 
 
 class EditExtraUserProfileForm(forms.ModelForm):
+    """Form for updating extra information about the user profile"""
     class Meta:
         model = ExtraUserProfile
         fields = ('avatar', 'about_me')
