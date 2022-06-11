@@ -1,4 +1,4 @@
-from blog_app.models import SeoData
+from .models import SeoData
 
 
 def get_seo_data(request):
