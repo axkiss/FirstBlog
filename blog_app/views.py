@@ -31,20 +31,27 @@ class PostDetailView(View):
     paginate_by = 20
 
     def get(self, request, slug, *args, **kwargs):
-        post = get_object_or_404(Post, slug=slug)
+        post_objects = Post.objects.select_related('author').only('title', 'description', 'slug', 'description',
+                                                                  'image', 'created_at', 'edited_at', 'tag', 'views',
+                                                                  'author__first_name', 'author__last_name')
+        post = get_object_or_404(post_objects, slug=slug)
         post.add_one_view()
         edited = (post.edited_at - post.created_at) > datetime.timedelta(minutes=1)
-        comments = post.comments.all()
-
+        comments = post.comments.select_related('username') \
+                                .select_related('username__extrauserprofile') \
+                                .only('id', 'post_id', 'text', 'created_at',
+                                'username__username', 'username__first_name', 'username__last_name',
+                                'username__is_staff', 'username__groups',
+                                'username__extrauserprofile__avatar')
         # Make pagination for comments
-        page_obj = get_paginate_queryset(request, comments, self.paginate_by)
+        page_obj, count_objs = get_paginate_queryset(request, comments, self.paginate_by)
 
         context = {
             'post': post,
             'edited': edited,
             'comment_form': AddCommentForm(),
             'comments': page_obj,
-            'count_comments': len(comments),
+            'count_comments': count_objs,
         }
         return render(request, self.template_name, context=context)
 
