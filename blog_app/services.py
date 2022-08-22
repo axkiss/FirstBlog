@@ -18,7 +18,7 @@ def get_paginate_queryset(request, queryset, page_size):
     paginator = Paginator(queryset, page_size)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    return page_obj
+    return page_obj, paginator.count
 
 
 def get_results_search(model, search_query, len_desc_post=200, posts_on_page=10, max_pages_pagination=5):
