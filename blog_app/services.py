@@ -31,8 +31,9 @@ def get_results_search(model, search_query, len_desc_post=200, posts_on_page=10,
         return ''
     # Find search query in database of posts
     result_posts = model.objects.filter(
-        Q(title__icontains=search_query) | Q(description__icontains=search_query)).order_by('-id') \
-        [:posts_on_page * max_pages_pagination]
+        Q(title__icontains=search_query) |
+        Q(description__icontains=search_query)
+    ).order_by('-id').only('title', 'slug', 'thumbnail', 'description')[:posts_on_page * max_pages_pagination]
     if len(result_posts) == 0:
         return ''
     else:
