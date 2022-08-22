@@ -124,7 +124,8 @@ class TagListView(ListView):
     def get_queryset(self):
         slug = self.kwargs['slug']
         tag = get_object_or_404(Tag, slug=slug)
-        posts = Post.objects.filter(tag=tag).order_by('-id')
+        posts = Post.objects.filter(tag=tag).order_by('-id').prefetch_related('tag').only('title', 'slug', 'image',
+                                                                                          'created_at')
         return posts
 
     def get_context_data(self, *, object_list=None, **kwargs):
