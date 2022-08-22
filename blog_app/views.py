@@ -20,7 +20,7 @@ from .utils import send_feedback
 class MainListView(ListView):
     """List of posts for the main page"""
     template_name = 'blog_app/home.html'
-    model = Post
+    queryset = Post.objects.all().prefetch_related('tag').only('title', 'slug', 'image', 'created_at')
     paginate_by = 20
     context_object_name = 'posts'
 
@@ -38,11 +38,11 @@ class PostDetailView(View):
         post.add_one_view()
         edited = (post.edited_at - post.created_at) > datetime.timedelta(minutes=1)
         comments = post.comments.select_related('username') \
-                                .select_related('username__extrauserprofile') \
-                                .only('id', 'post_id', 'text', 'created_at',
-                                'username__username', 'username__first_name', 'username__last_name',
-                                'username__is_staff', 'username__groups',
-                                'username__extrauserprofile__avatar')
+            .select_related('username__extrauserprofile') \
+            .only('id', 'post_id', 'text', 'created_at',
+                  'username__username', 'username__first_name', 'username__last_name',
+                  'username__is_staff', 'username__groups',
+                  'username__extrauserprofile__avatar')
         # Make pagination for comments
         page_obj, count_objs = get_paginate_queryset(request, comments, self.paginate_by)
 
