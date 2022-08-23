@@ -92,7 +92,10 @@ class UserProfileDetailView(DetailView):
     context_object_name = 'user_profile'
 
     def get_object(self, **kwargs):
-        return get_object_or_404(User, username=self.kwargs.get('username'))
+        user_objects = User.objects.all().select_related('extrauserprofile').defer('password', 'last_login',
+                                                                                   'is_superuser', 'is_active',
+                                                                                   'date_joined', 'email_verify')
+        return get_object_or_404(user_objects, username=self.kwargs.get('username'))
 
 
 class EditUserProfileView(View):
