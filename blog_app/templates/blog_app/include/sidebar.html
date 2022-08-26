@@ -1,43 +1,47 @@
 {% load blog_app_tags %}
+{% load cache %}
 <!--Sidebar block-->
-<div class="col-md-9 col-lg-3 mb-5">
-    <!--Tags block -->
-    <div class="card bg-secondary bg-opacity-10 border-secondary mb-4">
-        <div class="card-header text-center fs-5 ">
-            <b>Tags</b>
+{% cache 600 sidebar %}
+    <div class="col-md-9 col-lg-3 mb-5">
+        <!--Tags block -->
+        <div class="card bg-secondary bg-opacity-10 border-secondary mb-4">
+            <div class="card-header text-center fs-5 ">
+                <b>Tags</b>
+            </div>
+            <div class="list-group">
+                <p class="pt-2 text-center">
+                    {% list_tags pos='aside' cnt_head_tag=3 cnt_side_tag=10 as aside_tags %}
+                    {% for aside_tag in aside_tags %}
+                        <a href="{% url 'blog:tag' aside_tag.slug %}" class="text-decoration-none">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-light position-relative m-2">{{ aside_tag }}
+                                <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">{{ aside_tag.num_times }}</span>
+                            </button>
+                        </a>
+                    {% endfor %}
+                </p>
+            </div>
         </div>
-        <div class="list-group">
-            <p class="pt-2 text-center">
-                {% list_tags pos='aside' cnt_head_tag=3 cnt_side_tag=10 as aside_tags %}
-                {% for aside_tag in aside_tags %}
-                    <a href="{% url 'blog:tag' aside_tag.slug %}" class="text-decoration-none">
-                        <button type="button" class="btn btn-sm btn-outline-light position-relative m-2">{{ aside_tag }}
-                            <span
-                                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark">{{ aside_tag.num_times }}</span>
-                        </button>
+        <!--Interesting news block-->
+        <div class="card bg-secondary bg-opacity-10 border-secondary sticky-xl-top">
+            <div class="card-header text-center fs-5">
+                <b>Popular posts</b>
+            </div>
+            <div class="list-group">
+                {% popular_posts days=7 cnt_posts=5 as aside_posts %}
+                {% for aside_post in aside_posts %}
+                    <a href="{{ aside_post.get_absolute_url }}" class="list-group-item bg-transparent base-link">
+                        <div class="d-flex w-100 justify-content-between align-items-center">
+                            <h6 class="mb-0 me-1">{{ aside_post.title|truncatechars:70 }}</h6>
+                            <img src="{{ aside_post.thumbnail.url }}" width="64"
+                                 height="64"
+                                 alt="{{ aside_post.title }}"
+                                 class="rounded-2">
+                        </div>
                     </a>
                 {% endfor %}
-            </p>
+            </div>
         </div>
     </div>
-    <!--Interesting news block-->
-    <div class="card bg-secondary bg-opacity-10 border-secondary sticky-xl-top">
-        <div class="card-header text-center fs-5">
-            <b>Popular posts</b>
-        </div>
-        <div class="list-group">
-            {% popular_posts days=7 cnt_posts=5 as aside_posts %}
-            {% for aside_post in aside_posts %}
-                <a href="{{ aside_post.get_absolute_url }}" class="list-group-item bg-transparent base-link">
-                    <div class="d-flex w-100 justify-content-between align-items-center">
-                        <h6 class="mb-0 me-1">{{ aside_post.title|truncatechars:70 }}</h6>
-                        <img src="{{ aside_post.thumbnail.url }}" width="64"
-                             height="64"
-                             alt="{{ aside_post.title }}"
-                             class="rounded-2">
-                    </div>
-                </a>
-            {% endfor %}
-        </div>
-    </div>
-</div>
+{% endcache %}
